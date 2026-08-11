@@ -192,23 +192,31 @@ python3 src/model.py
 
 ---
 
-# 📊 Example Results
+# 📊 Results
 
 | Metric | Value |
 |--------|-------|
-| Model | Random Forest (Spark MLlib) |
-| AUC | *[fill in after training]* |
-| Accuracy | *[fill in after training]* |
-| Top delay factor | *[fill in from feature importances]* |
+| Model | Random Forest (Spark MLlib, class-weighted + threshold-tuned) |
+| AUC | 0.649 |
+| Recall (delayed class) | 63.7% |
+| Precision (delayed class) | 25.8% |
+| Top delay factor | Late Aircraft Delay (39.8% of total delay minutes) |
+
+**Note:** an unweighted baseline model achieved 81.37% "accuracy" by simply never
+predicting a delay — a known failure mode with imbalanced classes (81.4% on-time /
+18.6% delayed). The weighted, threshold-tuned model trades some precision for the
+ability to actually catch real delays.
 
 ---
 
 # 💡 Example Predictions
 
-| Route | Airline | Scheduled Departure | Prediction |
-|-------|---------|---------------------|------------|
-| *[fill in]* | *[fill in]* | *[fill in]* | Delayed |
-| *[fill in]* | *[fill in]* | *[fill in]* | On-time |
+Tested live against the deployed dashboard:
+
+| Airline | Origin | Month | Day | Departure | Distance | Prediction |
+|---------|--------|-------|-----|-----------|----------|------------|
+| Spirit Air Lines | ORD | June | Thursday | 19:00 | 800 mi | Delayed (68.5%) |
+| Alaska Airlines Inc. | ABE | June | Monday | 12:00 | 500 mi | On-time (47.5%) |
 
 ---
 
@@ -216,7 +224,13 @@ python3 src/model.py
 
 ## Delay Rate by Airline
 
-![Delay by Airline](outputs/charts/01_delay_by_carrier.png)
+![Delay by Airline](outputs/charts/01_delay_by_airline.png)
+
+---
+
+## Delay Rate by Airport
+
+![Delay by Airport](outputs/charts/02_delay_by_airport.png)
 
 ---
 
@@ -226,9 +240,21 @@ python3 src/model.py
 
 ---
 
+## Delay Rate by Hour of Day
+
+![Delay by Hour](outputs/charts/04_delay_by_hour.png)
+
+---
+
+## Delay Rate by Day of Week
+
+![Delay by Day of Week](outputs/charts/05_delay_by_dayofweek.png)
+
+---
+
 ## Monthly Delay Trend
 
-![Monthly Trend](outputs/charts/04_monthly_trend.png)
+![Monthly Trend](outputs/charts/06_delay_by_month.png)
 
 ---
 
