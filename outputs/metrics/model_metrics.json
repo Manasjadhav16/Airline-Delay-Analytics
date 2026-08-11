@@ -1,0 +1,35 @@
+{
+  "majority_class_baseline_accuracy": 0.8137,
+  "logistic_regression": {
+    "model": "LogisticRegression",
+    "auc": 0.6124,
+    "accuracy": 0.8137,
+    "f1": 0.7301,
+    "precision": 0.6621,
+    "recall": 0.8137,
+    "confusion_matrix": {
+      "actual_0_predicted_0": 929861,
+      "actual_1_predicted_0": 212884
+    }
+  },
+  "random_forest": {
+    "model": "RandomForest",
+    "auc": 0.63,
+    "accuracy": 0.8137,
+    "f1": 0.7301,
+    "precision": 0.6621,
+    "recall": 0.8137,
+    "confusion_matrix": {
+      "actual_0_predicted_0": 929861,
+      "actual_1_predicted_0": 212884
+    }
+  },
+  "random_forest_feature_importances": {
+    "SCHEDULED_DEPARTURE_HOUR": 0.6887,
+    "MONTH": 0.1736,
+    "ORIGIN_AIRPORT_INDEXED": 0.0787,
+    "AIRLINE_INDEXED": 0.0481,
+    "DAY_OF_WEEK": 0.0076,
+    "DISTANCE": 0.0033
+  }
+}

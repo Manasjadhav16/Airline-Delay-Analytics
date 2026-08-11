@@ -1,0 +1,208 @@
+{
+  "class_weights": {
+    "1": 2.687223636331572,
+    "0": 0.6143001547017396
+  },
+  "weighted_logistic_regression": {
+    "auc": 0.6124,
+    "threshold_sweep": [
+      {
+        "threshold": 0.3,
+        "precision": 0.1876,
+        "recall": 0.9935,
+        "f1": 0.3155,
+        "tp": 211493,
+        "fp": 916137,
+        "fn": 1391,
+        "tn": 13724
+      },
+      {
+        "threshold": 0.35,
+        "precision": 0.1948,
+        "recall": 0.965,
+        "f1": 0.3241,
+        "tp": 205430,
+        "fp": 849195,
+        "fn": 7454,
+        "tn": 80666
+      },
+      {
+        "threshold": 0.4,
+        "precision": 0.2096,
+        "recall": 0.8836,
+        "f1": 0.3388,
+        "tp": 188113,
+        "fp": 709392,
+        "fn": 24771,
+        "tn": 220469
+      },
+      {
+        "threshold": 0.45,
+        "precision": 0.2268,
+        "recall": 0.7514,
+        "f1": 0.3484,
+        "tp": 159963,
+        "fp": 545401,
+        "fn": 52921,
+        "tn": 384460
+      },
+      {
+        "threshold": 0.5,
+        "precision": 0.2429,
+        "recall": 0.5908,
+        "f1": 0.3442,
+        "tp": 125773,
+        "fp": 392081,
+        "fn": 87111,
+        "tn": 537780
+      },
+      {
+        "threshold": 0.55,
+        "precision": 0.2563,
+        "recall": 0.4072,
+        "f1": 0.3146,
+        "tp": 86679,
+        "fp": 251450,
+        "fn": 126205,
+        "tn": 678411
+      },
+      {
+        "threshold": 0.6,
+        "precision": 0.2615,
+        "recall": 0.2126,
+        "f1": 0.2346,
+        "tp": 45265,
+        "fp": 127802,
+        "fn": 167619,
+        "tn": 802059
+      }
+    ],
+    "best_threshold": {
+      "threshold": 0.45,
+      "precision": 0.2268,
+      "recall": 0.7514,
+      "f1": 0.3484,
+      "tp": 159963,
+      "fp": 545401,
+      "fn": 52921,
+      "tn": 384460
+    }
+  },
+  "weighted_random_forest": {
+    "auc": 0.6489,
+    "threshold_sweep": [
+      {
+        "threshold": 0.3,
+        "precision": 0.1934,
+        "recall": 0.9844,
+        "f1": 0.3233,
+        "tp": 209571,
+        "fp": 874108,
+        "fn": 3313,
+        "tn": 55753
+      },
+      {
+        "threshold": 0.35,
+        "precision": 0.2034,
+        "recall": 0.9452,
+        "f1": 0.3348,
+        "tp": 201215,
+        "fp": 787895,
+        "fn": 11669,
+        "tn": 141966
+      },
+      {
+        "threshold": 0.4,
+        "precision": 0.2211,
+        "recall": 0.8588,
+        "f1": 0.3517,
+        "tp": 182826,
+        "fp": 643899,
+        "fn": 30058,
+        "tn": 285962
+      },
+      {
+        "threshold": 0.45,
+        "precision": 0.2397,
+        "recall": 0.7537,
+        "f1": 0.3638,
+        "tp": 160457,
+        "fp": 508889,
+        "fn": 52427,
+        "tn": 420972
+      },
+      {
+        "threshold": 0.5,
+        "precision": 0.2584,
+        "recall": 0.6371,
+        "f1": 0.3677,
+        "tp": 135619,
+        "fp": 389159,
+        "fn": 77265,
+        "tn": 540702
+      },
+      {
+        "threshold": 0.55,
+        "precision": 0.276,
+        "recall": 0.5097,
+        "f1": 0.3581,
+        "tp": 108498,
+        "fp": 284630,
+        "fn": 104386,
+        "tn": 645231
+      },
+      {
+        "threshold": 0.6,
+        "precision": 0.3045,
+        "recall": 0.3227,
+        "f1": 0.3133,
+        "tp": 68697,
+        "fp": 156892,
+        "fn": 144187,
+        "tn": 772969
+      }
+    ],
+    "best_threshold": {
+      "threshold": 0.5,
+      "precision": 0.2584,
+      "recall": 0.6371,
+      "f1": 0.3677,
+      "tp": 135619,
+      "fp": 389159,
+      "fn": 77265,
+      "tn": 540702
+    },
+    "confusion_matrix_at_best_threshold": {
+      "actual_0_predicted_0": 540702,
+      "actual_0_predicted_1": 389159,
+      "actual_1_predicted_0": 77265,
+      "actual_1_predicted_1": 135619
+    }
+  },
+  "comparison": {
+    "before_unweighted_random_forest_0.5_threshold": {
+      "model": "RandomForest",
+      "auc": 0.63,
+      "accuracy": 0.8137,
+      "f1": 0.7301,
+      "precision": 0.6621,
+      "recall": 0.8137,
+      "confusion_matrix": {
+        "actual_0_predicted_0": 929861,
+        "actual_1_predicted_0": 212884
+      }
+    },
+    "after_weighted_random_forest_tuned_threshold": {
+      "threshold": 0.5,
+      "precision": 0.2584,
+      "recall": 0.6371,
+      "f1": 0.3677,
+      "confusion_matrix": {
+        "actual_0_predicted_0": 540702,
+        "actual_0_predicted_1": 389159,
+        "actual_1_predicted_0": 77265,
+        "actual_1_predicted_1": 135619
+      }
+    }
+  }
+}

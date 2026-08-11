@@ -1,0 +1,11 @@
+pyspark>=3.5.0
+pandas
+matplotlib
+seaborn
+scikit-learn
+pyarrow
+jupyter
+kaggle
+fastapi
+uvicorn[standard]
+joblib

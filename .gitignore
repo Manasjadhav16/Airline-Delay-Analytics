@@ -1,0 +1,15 @@
+data/raw/*.csv
+data/processed/
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.DS_Store
+spark-warehouse/
+metastore_db/
+frontend/node_modules/
+frontend/dist/
+backend/model/*.joblib
+.venv/
+claude.md 
+.claude/
