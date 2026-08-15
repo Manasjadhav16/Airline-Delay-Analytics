@@ -1,0 +1,215 @@
+{
+  "majority_class_baseline_accuracy": 0.8196,
+  "unweighted_logistic_regression": {
+    "model": "LogisticRegression (unweighted)",
+    "auc": 0.6087,
+    "accuracy": 0.8196,
+    "f1": 0.7384,
+    "precision": 0.6718,
+    "recall": 0.8196,
+    "confusion_matrix": {
+      "actual_0_predicted_0": 1844855,
+      "actual_1_predicted_0": 405963
+    }
+  },
+  "unweighted_random_forest": {
+    "model": "RandomForest (unweighted)",
+    "auc": 0.6294,
+    "accuracy": 0.8196,
+    "f1": 0.7384,
+    "precision": 0.6718,
+    "recall": 0.8196,
+    "confusion_matrix": {
+      "actual_0_predicted_0": 1844855,
+      "actual_1_predicted_0": 405963
+    }
+  },
+  "unweighted_random_forest_feature_importances": {
+    "SCHEDULED_DEPARTURE_HOUR": 0.6954,
+    "MONTH": 0.2064,
+    "ORIGIN_AIRPORT_INDEXED": 0.0561,
+    "AIRLINE_INDEXED": 0.0383,
+    "DISTANCE": 0.003,
+    "DAY_OF_WEEK": 0.0007
+  },
+  "class_weights": {
+    "1": 2.7752518167495523,
+    "0": 0.6098779476450007
+  },
+  "weighted_logistic_regression": {
+    "auc": 0.6088,
+    "threshold_sweep": [
+      {
+        "threshold": 0.3,
+        "precision": 0.1806,
+        "recall": 0.9968,
+        "f1": 0.3058,
+        "tp": 404646,
+        "fp": 1835824,
+        "fn": 1317,
+        "tn": 9031
+      },
+      {
+        "threshold": 0.35,
+        "precision": 0.1878,
+        "recall": 0.9711,
+        "f1": 0.3147,
+        "tp": 394247,
+        "fp": 1705488,
+        "fn": 11716,
+        "tn": 139367
+      },
+      {
+        "threshold": 0.4,
+        "precision": 0.2031,
+        "recall": 0.8817,
+        "f1": 0.3301,
+        "tp": 357920,
+        "fp": 1404506,
+        "fn": 48043,
+        "tn": 440349
+      },
+      {
+        "threshold": 0.45,
+        "precision": 0.2196,
+        "recall": 0.7476,
+        "f1": 0.3395,
+        "tp": 303478,
+        "fp": 1078608,
+        "fn": 102485,
+        "tn": 766247
+      },
+      {
+        "threshold": 0.5,
+        "precision": 0.2343,
+        "recall": 0.5901,
+        "f1": 0.3354,
+        "tp": 239541,
+        "fp": 782860,
+        "fn": 166422,
+        "tn": 1061995
+      },
+      {
+        "threshold": 0.55,
+        "precision": 0.2454,
+        "recall": 0.4049,
+        "f1": 0.3056,
+        "tp": 164375,
+        "fp": 505337,
+        "fn": 241588,
+        "tn": 1339518
+      },
+      {
+        "threshold": 0.6,
+        "precision": 0.2444,
+        "recall": 0.2005,
+        "f1": 0.2203,
+        "tp": 81381,
+        "fp": 251607,
+        "fn": 324582,
+        "tn": 1593248
+      }
+    ],
+    "best_threshold": {
+      "threshold": 0.45,
+      "precision": 0.2196,
+      "recall": 0.7476,
+      "f1": 0.3395,
+      "tp": 303478,
+      "fp": 1078608,
+      "fn": 102485,
+      "tn": 766247
+    }
+  },
+  "weighted_random_forest": {
+    "auc": 0.6491,
+    "threshold_sweep": [
+      {
+        "threshold": 0.3,
+        "precision": 0.1859,
+        "recall": 0.9877,
+        "f1": 0.3129,
+        "tp": 400973,
+        "fp": 1755693,
+        "fn": 4990,
+        "tn": 89162
+      },
+      {
+        "threshold": 0.35,
+        "precision": 0.198,
+        "recall": 0.9414,
+        "f1": 0.3272,
+        "tp": 382158,
+        "fp": 1547748,
+        "fn": 23805,
+        "tn": 297107
+      },
+      {
+        "threshold": 0.4,
+        "precision": 0.2139,
+        "recall": 0.856,
+        "f1": 0.3423,
+        "tp": 347507,
+        "fp": 1276851,
+        "fn": 58456,
+        "tn": 568004
+      },
+      {
+        "threshold": 0.45,
+        "precision": 0.2308,
+        "recall": 0.7559,
+        "f1": 0.3537,
+        "tp": 306863,
+        "fp": 1022519,
+        "fn": 99100,
+        "tn": 822336
+      },
+      {
+        "threshold": 0.5,
+        "precision": 0.2516,
+        "recall": 0.6289,
+        "f1": 0.3594,
+        "tp": 255303,
+        "fp": 759436,
+        "fn": 150660,
+        "tn": 1085419
+      },
+      {
+        "threshold": 0.55,
+        "precision": 0.2722,
+        "recall": 0.4915,
+        "f1": 0.3504,
+        "tp": 199546,
+        "fp": 533427,
+        "fn": 206417,
+        "tn": 1311428
+      },
+      {
+        "threshold": 0.6,
+        "precision": 0.3066,
+        "recall": 0.3027,
+        "f1": 0.3047,
+        "tp": 122892,
+        "fp": 277916,
+        "fn": 283071,
+        "tn": 1566939
+      }
+    ],
+    "best_threshold": {
+      "threshold": 0.5,
+      "precision": 0.2516,
+      "recall": 0.6289,
+      "f1": 0.3594,
+      "tp": 255303,
+      "fp": 759436,
+      "fn": 150660,
+      "tn": 1085419
+    },
+    "confusion_matrix_at_best_threshold": {
+      "actual_0_predicted_0": 1085419,
+      "actual_0_predicted_1": 759436,
+      "actual_1_predicted_0": 150660,
+      "actual_1_predicted_1": 255303
+    }
+  }
+}

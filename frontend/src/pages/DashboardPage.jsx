@@ -127,7 +127,7 @@ export default function DashboardPage() {
     <div className="page">
       <h1>Delay rate dashboard</h1>
       <p className="page-subtitle">
-        Live aggregates from the cleaned 2015 US flight-delay dataset (5.7M flights).
+        Live aggregates from the cleaned 2015-2016 US flight-delay dataset (11.3M+ flights).
       </p>
 
       <div className="stats-bar">

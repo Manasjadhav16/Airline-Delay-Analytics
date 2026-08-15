@@ -1,8 +1,10 @@
 """FastAPI backend for the Airline Delay Analytics dashboard.
 
 Serves delay predictions from the scikit-learn model exported by
-src/export_model.py, plus dashboard chart data from the aggregate.py CSV
-outputs.
+src/export_model_v2.py (trained on the combined 2015+2016 dataset), plus
+dashboard chart data from aggregate_v2.py's CSV outputs. The original
+single-year model/aggregate files are left on disk untouched for
+comparison/fallback -- this backend just points at the _v2 versions.
 
 Run from project root: uvicorn backend.main:app --reload
 """
@@ -22,20 +24,22 @@ PROCESSED_DIR = "data/processed"
 RAW_DIR = "data/raw"
 
 # Threshold tuned against the delayed-class F1 sweep in an earlier session
-# (Spark weighted RandomForest, best F1 at threshold 0.5).
+# (Spark weighted RandomForest on the combined dataset, best F1 at threshold
+# 0.5 -- same threshold as the single-year model, confirmed unchanged).
 DELAY_THRESHOLD = 0.5
 
-# From src/export_model.py's held-out test evaluation (sklearn RandomForest,
-# class_weight="balanced", threshold=0.5): precision=0.2517, recall=0.6407.
-MODEL_RECALL = 0.6407
-MODEL_PRECISION = 0.2517
+# From src/export_model_v2.py's held-out test evaluation (sklearn
+# RandomForest, class_weight="balanced", threshold=0.5, combined 2015+2016
+# dataset): precision=0.2499, recall=0.6196.
+MODEL_RECALL = 0.6196
+MODEL_PRECISION = 0.2499
 
 STATS_CATEGORY_MAP = {
-    "airline": ("agg_by_airline", "AIRLINE_NAME"),
-    "airport": ("agg_by_airport", "ORIGIN_AIRPORT"),
-    "hour": ("agg_by_hour", "SCHEDULED_DEPARTURE_HOUR"),
-    "dayofweek": ("agg_by_day_of_week", "DAY_OF_WEEK"),
-    "month": ("agg_by_month", "MONTH"),
+    "airline": ("agg_by_airline_v2", "AIRLINE_NAME"),
+    "airport": ("agg_by_airport_v2", "ORIGIN_AIRPORT"),
+    "hour": ("agg_by_hour_v2", "SCHEDULED_DEPARTURE_HOUR"),
+    "dayofweek": ("agg_by_day_of_week_v2", "DAY_OF_WEEK"),
+    "month": ("agg_by_month_v2", "MONTH"),
 }
 
 # Populated at startup by the lifespan handler below.
@@ -44,11 +48,11 @@ artifacts = {}
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    artifacts["model"] = joblib.load(f"{MODEL_DIR}/delay_model.joblib")
-    artifacts["airline_encoder"] = joblib.load(f"{MODEL_DIR}/airline_encoder.joblib")
-    artifacts["airport_encoder"] = joblib.load(f"{MODEL_DIR}/airport_encoder.joblib")
+    artifacts["model"] = joblib.load(f"{MODEL_DIR}/delay_model_v2.joblib")
+    artifacts["airline_encoder"] = joblib.load(f"{MODEL_DIR}/airline_encoder_v2.joblib")
+    artifacts["airport_encoder"] = joblib.load(f"{MODEL_DIR}/airport_encoder_v2.joblib")
 
-    with open(f"{MODEL_DIR}/feature_metadata.json") as f:
+    with open(f"{MODEL_DIR}/feature_metadata_v2.json") as f:
         artifacts["feature_metadata"] = json.load(f)
 
     # The model was trained on IATA airline codes (AIRLINE column), but the
@@ -139,7 +143,7 @@ def predict(request: PredictRequest):
     airline_encoded = artifacts["airline_encoder"].transform([airline_code])[0]
     airport_encoded = artifacts["airport_encoder"].transform([origin_airport])[0]
 
-    # Column order must match FEATURE_COLS from src/export_model.py.
+    # Column order must match FEATURE_COLS from src/export_model_v2.py.
     feature_row = pd.DataFrame(
         [
             {

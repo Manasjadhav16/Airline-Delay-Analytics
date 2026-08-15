@@ -13,3 +13,4 @@ backend/model/*.joblib
 .venv/
 claude.md 
 .claude/
+data/raw_v2/
