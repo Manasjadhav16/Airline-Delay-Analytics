@@ -413,3 +413,52 @@ main {
   color: var(--color-primary);
   flex-shrink: 0;
 }
+
+/* Model comparison + airport map sections */
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 2rem 0 0.35rem;
+  font-size: 1.15rem;
+  color: var(--color-text);
+}
+
+.section-heading svg {
+  color: var(--color-primary);
+}
+
+.chart-card-wide {
+  margin-top: 1rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+}
+
+.chart-footnote {
+  margin: 0.75rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  text-align: center;
+}
+
+.chart-footnote strong {
+  color: var(--color-text);
+}
+
+.map-legend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin-top: 0.75rem;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+}
+
+.map-legend-gradient {
+  display: inline-block;
+  width: 140px;
+  height: 8px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #0284c7, #b45309);
+}

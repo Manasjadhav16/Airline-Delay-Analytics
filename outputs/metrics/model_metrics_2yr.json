@@ -211,5 +211,96 @@
       "actual_1_predicted_0": 150660,
       "actual_1_predicted_1": 255303
     }
+  },
+  "weighted_decision_tree": {
+    "auc": 0.5627,
+    "threshold_sweep": [
+      {
+        "threshold": 0.3,
+        "precision": 0.191,
+        "recall": 0.9637,
+        "f1": 0.3189,
+        "tp": 391246,
+        "fp": 1656766,
+        "fn": 14717,
+        "tn": 188089
+      },
+      {
+        "threshold": 0.35,
+        "precision": 0.2037,
+        "recall": 0.9017,
+        "f1": 0.3324,
+        "tp": 366051,
+        "fp": 1430620,
+        "fn": 39912,
+        "tn": 414235
+      },
+      {
+        "threshold": 0.4,
+        "precision": 0.212,
+        "recall": 0.8511,
+        "f1": 0.3394,
+        "tp": 345496,
+        "fp": 1284403,
+        "fn": 60467,
+        "tn": 560452
+      },
+      {
+        "threshold": 0.45,
+        "precision": 0.2313,
+        "recall": 0.728,
+        "f1": 0.3511,
+        "tp": 295544,
+        "fp": 982237,
+        "fn": 110419,
+        "tn": 862618
+      },
+      {
+        "threshold": 0.5,
+        "precision": 0.2482,
+        "recall": 0.6317,
+        "f1": 0.3563,
+        "tp": 256465,
+        "fp": 776995,
+        "fn": 149498,
+        "tn": 1067860
+      },
+      {
+        "threshold": 0.55,
+        "precision": 0.27,
+        "recall": 0.4659,
+        "f1": 0.3419,
+        "tp": 189145,
+        "fp": 511458,
+        "fn": 216818,
+        "tn": 1333397
+      },
+      {
+        "threshold": 0.6,
+        "precision": 0.3004,
+        "recall": 0.2894,
+        "f1": 0.2948,
+        "tp": 117484,
+        "fp": 273560,
+        "fn": 288479,
+        "tn": 1571295
+      }
+    ],
+    "best_threshold": {
+      "threshold": 0.5,
+      "precision": 0.2482,
+      "recall": 0.6317,
+      "f1": 0.3563,
+      "tp": 256465,
+      "fp": 776995,
+      "fn": 149498,
+      "tn": 1067860
+    },
+    "confusion_matrix_at_best_threshold": {
+      "actual_0_predicted_0": 1067860,
+      "actual_0_predicted_1": 776995,
+      "actual_1_predicted_0": 149498,
+      "actual_1_predicted_1": 256465
+    }
   }
 }

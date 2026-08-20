@@ -21,6 +21,7 @@ from sklearn.metrics import (
 )
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
+from sklearn.tree import DecisionTreeClassifier
 
 PROCESSED_DIR = "data/processed"
 MODEL_DIR = "backend/model"
@@ -109,7 +110,32 @@ def main():
     print(f"Recall:    {round(recall, 4)} (Spark ballpark: ~60%)")
     print(f"F1:        {round(f1, 4)}")
 
+    # Decision Tree, matching config (same features/split/class_weight) for
+    # the dashboard's 3-way model comparison alongside src/model_v2.py's
+    # Spark LR/DT/RF comparison.
+    dt_model = DecisionTreeClassifier(
+        max_depth=8,
+        class_weight="balanced",
+        random_state=SEED,
+    )
+    dt_model.fit(X_train, y_train)
+
+    dt_pred = dt_model.predict(X_test)
+    dt_proba = dt_model.predict_proba(X_test)[:, 1]
+
+    dt_auc = roc_auc_score(y_test, dt_proba)
+    dt_precision = precision_score(y_test, dt_pred, pos_label=1)
+    dt_recall = recall_score(y_test, dt_pred, pos_label=1)
+    dt_f1 = f1_score(y_test, dt_pred, pos_label=1)
+
+    print("\n=== scikit-learn DecisionTree evaluation (threshold=0.5, delayed class) ===")
+    print(f"AUC:       {round(dt_auc, 4)}")
+    print(f"Precision: {round(dt_precision, 4)}")
+    print(f"Recall:    {round(dt_recall, 4)}")
+    print(f"F1:        {round(dt_f1, 4)}")
+
     joblib.dump(model, f"{MODEL_DIR}/delay_model_v2.joblib")
+    joblib.dump(dt_model, f"{MODEL_DIR}/delay_model_dt.joblib")
     joblib.dump(airline_encoder, f"{MODEL_DIR}/airline_encoder_v2.joblib")
     joblib.dump(airport_encoder, f"{MODEL_DIR}/airport_encoder_v2.joblib")
 
@@ -137,6 +163,7 @@ def main():
         json.dump(feature_metadata, f, indent=2)
 
     print(f"\nSaved model to {MODEL_DIR}/delay_model_v2.joblib")
+    print(f"Saved Decision Tree model to {MODEL_DIR}/delay_model_dt.joblib")
     print(f"Saved airline encoder to {MODEL_DIR}/airline_encoder_v2.joblib")
     print(f"Saved airport encoder to {MODEL_DIR}/airport_encoder_v2.joblib")
     print(f"Saved feature metadata to {MODEL_DIR}/feature_metadata_v2.json")

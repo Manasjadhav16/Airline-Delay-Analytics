@@ -22,6 +22,7 @@ from pydantic import BaseModel, Field
 MODEL_DIR = "backend/model"
 PROCESSED_DIR = "data/processed"
 RAW_DIR = "data/raw"
+METRICS_DIR = "outputs/metrics"
 
 # Threshold tuned against the delayed-class F1 sweep in an earlier session
 # (Spark weighted RandomForest on the combined dataset, best F1 at threshold
@@ -175,6 +176,59 @@ def predict(request: PredictRequest):
     )
 
 
+@app.get("/stats/model-comparison")
+def get_model_comparison():
+    """3-way Logistic Regression vs Decision Tree vs Random Forest comparison
+    from src/model_v2.py, each at its own best-F1 threshold (delayed class)."""
+    path = f"{METRICS_DIR}/model_comparison_3way.json"
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail=(
+                "No model comparison data found — has src/model_v2.py been "
+                "run since the 3-way comparison was added?"
+            ),
+        )
+
+
+@app.get("/stats/airport-map")
+def get_airport_map():
+    """Airport delay rates joined with lat/lon from airports.csv, for the
+    dashboard's geographic map. agg_by_airport_v2.csv (aggregate_v2.py) is
+    already restricted to airports with > 10,000 flights, which is stricter
+    than (and therefore already satisfies) the > 5,000 threshold requested
+    here -- so the explicit filter below is a no-op today but keeps the
+    contract correct if that upstream threshold ever changes."""
+    matches = glob.glob(f"{PROCESSED_DIR}/agg_by_airport_v2.csv/part-*.csv")
+    if not matches:
+        raise HTTPException(
+            status_code=404,
+            detail="No airport aggregate data found — has src/aggregate_v2.py been run?",
+        )
+
+    airport_stats = pd.read_csv(matches[0])
+    airport_stats = airport_stats[airport_stats["total_flights"] > 5000]
+
+    airports_geo = pd.read_csv(f"{RAW_DIR}/airports.csv")[
+        ["IATA_CODE", "LATITUDE", "LONGITUDE"]
+    ]
+
+    merged = airport_stats.merge(
+        airports_geo, left_on="ORIGIN_AIRPORT", right_on="IATA_CODE", how="inner"
+    )
+    merged = merged.rename(
+        columns={"ORIGIN_AIRPORT": "airport", "LATITUDE": "lat", "LONGITUDE": "lon"}
+    )
+    merged = merged[["airport", "delay_pct", "total_flights", "lat", "lon"]]
+    return merged.to_dict(orient="records")
+
+
+# NOTE: this route must stay registered BEFORE /stats/{category} below --
+# otherwise the parameterized route would swallow "/stats/model-comparison"
+# requests as category="model-comparison" and 404 them there instead.
 @app.get("/stats/{category}")
 def get_stats(category: str):
     if category not in STATS_CATEGORY_MAP:

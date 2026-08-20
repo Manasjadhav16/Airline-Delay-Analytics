@@ -13,7 +13,11 @@ Run from project root: python3 src/model_v2.py
 import json
 
 from pyspark import StorageLevel
-from pyspark.ml.classification import LogisticRegression, RandomForestClassifier
+from pyspark.ml.classification import (
+    DecisionTreeClassifier,
+    LogisticRegression,
+    RandomForestClassifier,
+)
 from pyspark.ml.evaluation import (
     BinaryClassificationEvaluator,
     MulticlassClassificationEvaluator,
@@ -279,6 +283,26 @@ def main():
     print(f"\nWeighted RandomForest AUC: {round(rf_weighted_auc, 4)}")
     rf_sweep, rf_best = sweep_thresholds(rf_weighted_predictions, "Weighted RandomForest")
 
+    # (c) Weighted Decision Tree -- same features, class weighting, and
+    # train/test split as LR and RF above, for an apples-to-apples 3-way
+    # comparison. maxDepth/maxBins matched to the RF config (maxBins must be
+    # >= the cardinality of the largest categorical feature, same as RF).
+    dt_weighted = DecisionTreeClassifier(
+        featuresCol="features",
+        labelCol=LABEL_COL,
+        maxDepth=8,
+        maxBins=700,
+        seed=42,
+        weightCol="classWeight",
+    )
+    dt_weighted_model = dt_weighted.fit(train_weighted)
+    dt_weighted_predictions = dt_weighted_model.transform(test_df)
+    dt_weighted_auc = BinaryClassificationEvaluator(
+        labelCol=LABEL_COL, rawPredictionCol="rawPrediction", metricName="areaUnderROC"
+    ).evaluate(dt_weighted_predictions)
+    print(f"\nWeighted DecisionTree AUC: {round(dt_weighted_auc, 4)}")
+    dt_sweep, dt_best = sweep_thresholds(dt_weighted_predictions, "Weighted DecisionTree")
+
     rf_best_t = rf_best["threshold"]
     rf_tuned = rf_weighted_predictions.withColumn(
         "prob_delayed", vector_to_array("probability")[1]
@@ -294,6 +318,23 @@ def main():
     rf_tuned_confusion_counts = {
         f"actual_{int(row[LABEL_COL])}_predicted_{int(row['tuned_prediction'])}": row["count"]
         for row in rf_tuned_confusion
+    }
+
+    dt_best_t = dt_best["threshold"]
+    dt_tuned = dt_weighted_predictions.withColumn(
+        "prob_delayed", vector_to_array("probability")[1]
+    ).withColumn(
+        "tuned_prediction", F.when(F.col("prob_delayed") >= dt_best_t, 1).otherwise(0)
+    )
+    dt_tuned_confusion = (
+        dt_tuned.groupBy(LABEL_COL, "tuned_prediction")
+        .count()
+        .orderBy(LABEL_COL, "tuned_prediction")
+        .collect()
+    )
+    dt_tuned_confusion_counts = {
+        f"actual_{int(row[LABEL_COL])}_predicted_{int(row['tuned_prediction'])}": row["count"]
+        for row in dt_tuned_confusion
     }
 
     print("\n=== Before vs After comparison (2015+2016 combined) ===")
@@ -321,12 +362,75 @@ def main():
         "best_threshold": rf_best,
         "confusion_matrix_at_best_threshold": rf_tuned_confusion_counts,
     }
+    all_metrics["weighted_decision_tree"] = {
+        "auc": round(dt_weighted_auc, 4),
+        "threshold_sweep": dt_sweep,
+        "best_threshold": dt_best,
+        "confusion_matrix_at_best_threshold": dt_tuned_confusion_counts,
+    }
 
     with open(f"{METRICS_DIR}/model_metrics_2yr.json", "w") as f:
         json.dump(all_metrics, f, indent=2)
 
     print(f"\nMetrics saved to {METRICS_DIR}/model_metrics_2yr.json")
     print(f"Confusion matrix saved to {confusion_csv_path}")
+
+    # ------------------------------------------------------------------
+    # 3-way comparison: Logistic Regression vs Decision Tree vs Random
+    # Forest, each at its own best F1 threshold on the delayed class.
+    # ------------------------------------------------------------------
+    comparison_rows = [
+        {
+            "model": "Logistic Regression",
+            "auc": round(lr_weighted_auc, 4),
+            "best_threshold": lr_best["threshold"],
+            "precision": lr_best["precision"],
+            "recall": lr_best["recall"],
+            "f1": lr_best["f1"],
+        },
+        {
+            "model": "Decision Tree",
+            "auc": round(dt_weighted_auc, 4),
+            "best_threshold": dt_best["threshold"],
+            "precision": dt_best["precision"],
+            "recall": dt_best["recall"],
+            "f1": dt_best["f1"],
+        },
+        {
+            "model": "Random Forest",
+            "auc": round(rf_weighted_auc, 4),
+            "best_threshold": rf_best["threshold"],
+            "precision": rf_best["precision"],
+            "recall": rf_best["recall"],
+            "f1": rf_best["f1"],
+        },
+    ]
+
+    print("\n=== 3-way model comparison (2015+2016 combined, class-weighted, best F1 threshold each) ===")
+    header = f"{'Model':<22} {'AUC':>8} {'Threshold':>10} {'Precision':>10} {'Recall':>8} {'F1':>8}"
+    print(header)
+    print("-" * len(header))
+    for row in comparison_rows:
+        print(
+            f"{row['model']:<22} {row['auc']:>8.4f} {row['best_threshold']:>10.2f} "
+            f"{row['precision']:>10.4f} {row['recall']:>8.4f} {row['f1']:>8.4f}"
+        )
+
+    best_by_f1 = max(comparison_rows, key=lambda r: r["f1"])
+    print(f"\nBest by F1 (delayed class): {best_by_f1['model']} (f1={best_by_f1['f1']})")
+
+    model_comparison = {
+        "dataset": "2015+2016 combined",
+        "train_rows": train_count,
+        "test_rows": test_count,
+        "features": FEATURE_COLS,
+        "class_weighting": "inverse-frequency (total / (2 * class_count))",
+        "comparison": comparison_rows,
+        "best_model_by_f1": best_by_f1["model"],
+    }
+    with open(f"{METRICS_DIR}/model_comparison_3way.json", "w") as f:
+        json.dump(model_comparison, f, indent=2)
+    print(f"\n3-way comparison saved to {METRICS_DIR}/model_comparison_3way.json")
 
     df.unpersist()
     train_df.unpersist()

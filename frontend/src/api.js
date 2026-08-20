@@ -24,6 +24,16 @@ export async function fetchStats(category) {
   return handleResponse(response);
 }
 
+export async function fetchModelComparison() {
+  const response = await fetch(`${API_BASE_URL}/stats/model-comparison`);
+  return handleResponse(response);
+}
+
+export async function fetchAirportMap() {
+  const response = await fetch(`${API_BASE_URL}/stats/airport-map`);
+  return handleResponse(response);
+}
+
 export async function predictDelay(payload) {
   const response = await fetch(`${API_BASE_URL}/predict`, {
     method: "POST",

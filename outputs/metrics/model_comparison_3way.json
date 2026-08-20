@@ -1,0 +1,41 @@
+{
+  "dataset": "2015+2016 combined",
+  "train_rows": 9001335,
+  "test_rows": 2250818,
+  "features": [
+    "AIRLINE_INDEXED",
+    "ORIGIN_AIRPORT_INDEXED",
+    "MONTH",
+    "DAY_OF_WEEK",
+    "SCHEDULED_DEPARTURE_HOUR",
+    "DISTANCE"
+  ],
+  "class_weighting": "inverse-frequency (total / (2 * class_count))",
+  "comparison": [
+    {
+      "model": "Logistic Regression",
+      "auc": 0.6088,
+      "best_threshold": 0.45,
+      "precision": 0.2196,
+      "recall": 0.7476,
+      "f1": 0.3395
+    },
+    {
+      "model": "Decision Tree",
+      "auc": 0.5627,
+      "best_threshold": 0.5,
+      "precision": 0.2482,
+      "recall": 0.6317,
+      "f1": 0.3563
+    },
+    {
+      "model": "Random Forest",
+      "auc": 0.6491,
+      "best_threshold": 0.5,
+      "precision": 0.2516,
+      "recall": 0.6289,
+      "f1": 0.3594
+    }
+  ],
+  "best_model_by_f1": "Random Forest"
+}
