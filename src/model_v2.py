@@ -88,7 +88,7 @@ def evaluate(predictions, model_name):
     return result, confusion
 
 
-def sweep_thresholds(predictions, model_name):
+def sweep_thresholds(predictions, model_name, thresholds=THRESHOLDS):
     predictions = predictions.withColumn(
         "prob_delayed", vector_to_array("probability")[1]
     )
@@ -99,7 +99,7 @@ def sweep_thresholds(predictions, model_name):
     print(f"{'threshold':>10} {'precision':>10} {'recall':>10} {'f1':>10}")
 
     sweep_results = []
-    for t in THRESHOLDS:
+    for t in thresholds:
         row = predictions.agg(
             F.sum(
                 F.when((F.col(LABEL_COL) == 1) & (F.col("prob_delayed") >= t), 1).otherwise(0)

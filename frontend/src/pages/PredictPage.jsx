@@ -1,16 +1,15 @@
-import { useEffect, useState } from "react";
-import {
-  AlertTriangle,
-  Calendar,
-  CheckCircle,
-  Clock,
-  MapPin,
-  Plane,
-  PlaneTakeoff,
-  Ruler,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { fetchMetadata, predictDelay } from "../api";
-import { MONTHS, DAYS_OF_WEEK, HOURS } from "../constants";
+import {
+  AIRLINE_CODES,
+  DAY_LABELS_SHORT,
+  DAYS_OF_WEEK,
+  HOURS,
+  MONTH_LABELS_SHORT,
+  MONTHS,
+} from "../constants";
+import SplitFlap from "../components/SplitFlap";
+import "./PredictPage.css";
 
 const initialForm = {
   airline: "",
@@ -21,6 +20,24 @@ const initialForm = {
   distance: 500,
 };
 
+function formatClock(date) {
+  return `${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+}
+
+function formatChance(probability) {
+  const pct = probability * 100;
+  return pct >= 99.95 ? "100%" : `${pct.toFixed(1)}%`;
+}
+
+function useClock() {
+  const [now, setNow] = useState(() => formatClock(new Date()));
+  useEffect(() => {
+    const id = setInterval(() => setNow(formatClock(new Date())), 10_000);
+    return () => clearInterval(id);
+  }, []);
+  return now;
+}
+
 export default function PredictPage() {
   const [metadata, setMetadata] = useState({ airlines: [], airports: [] });
   const [metadataError, setMetadataError] = useState(null);
@@ -28,6 +45,8 @@ export default function PredictPage() {
   const [status, setStatus] = useState("idle"); // idle | loading | success | error
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
+  const boardRef = useRef(null);
+  const clock = useClock();
 
   useEffect(() => {
     fetchMetadata()
@@ -44,6 +63,11 @@ export default function PredictPage() {
 
   function updateField(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
+    // Any edit makes the previous verdict stale.
+    if (status === "success" || status === "error") {
+      setStatus("idle");
+      setResult(null);
+    }
   }
 
   async function handleSubmit(e) {
@@ -51,6 +75,13 @@ export default function PredictPage() {
     setStatus("loading");
     setError(null);
     setResult(null);
+
+    // On narrow screens the board is above the fold-out form; bring it back.
+    const board = boardRef.current;
+    if (board && board.getBoundingClientRect().top < 0) {
+      board.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
     try {
       const payload = {
         airline: form.airline,
@@ -71,167 +102,196 @@ export default function PredictPage() {
 
   if (metadataError) {
     return (
-      <div className="page">
-        <div className="alert alert-error">
-          Could not load dropdown data from the API: {metadataError}
-          <br />
-          Is the backend running at the configured API_BASE_URL?
+      <div className="board-page">
+        <div className="board-inner">
+          <p className="board-eyebrow">Departures</p>
+          <h1 className="board-title">Board offline</h1>
+          <p className="board-message board-message-error" role="alert">
+            Could not load airlines and airports from the API: {metadataError}. Check that the
+            backend is running at the configured API_BASE_URL.
+          </p>
         </div>
       </div>
     );
   }
 
   const isDelayed = result?.prediction === "delayed";
+  const statusText = {
+    idle: "",
+    loading: "CHECKING",
+    success: isDelayed ? "DELAYED" : "ON TIME",
+    error: "NO DATA",
+  }[status];
+  const chanceText = status === "success" ? formatChance(result.probability) : "";
+  const airlineCode = AIRLINE_CODES[form.airline] ?? form.airline.slice(0, 2);
+  const miles = Number(form.distance) > 0 ? String(Math.round(Number(form.distance))) : "";
 
   return (
-    <div className="page">
-      <div className="hero">
-        <div className="hero-icon">
-          <PlaneTakeoff size={30} strokeWidth={2} />
-        </div>
-        <h1>Will your flight be on time?</h1>
-        <p className="page-subtitle">
-          Enter flight details known before departure to get a delay prediction.
-        </p>
-      </div>
+    <div className="board-page">
+      <div className="board-inner">
+        <header className="board-head">
+          <div>
+            <p className="board-eyebrow">Delay forecast · 2015–2016 U.S. domestic flights</p>
+            <h1 className="board-title">Departures</h1>
+          </div>
+          <div className="board-clock">
+            <span className="board-label">Local time</span>
+            <SplitFlap value={clock} length={5} stagger={30} />
+          </div>
+        </header>
 
-      <form className="predict-form" onSubmit={handleSubmit}>
-        <div className="form-grid">
-          <label className="form-field">
-            <span className="form-field-label">
-              <Plane size={14} /> Airline
-            </span>
-            <select
-              value={form.airline}
-              onChange={(e) => updateField("airline", e.target.value)}
-              required
-            >
-              {metadata.airlines.map((a) => (
-                <option key={a} value={a}>
-                  {a}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-field">
-            <span className="form-field-label">
-              <MapPin size={14} /> Origin airport
-            </span>
-            <select
-              value={form.origin_airport}
-              onChange={(e) => updateField("origin_airport", e.target.value)}
-              required
-            >
-              {metadata.airports.map((code) => (
-                <option key={code} value={code}>
-                  {code}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-field">
-            <span className="form-field-label">
-              <Calendar size={14} /> Month
-            </span>
-            <select
-              value={form.month}
-              onChange={(e) => updateField("month", e.target.value)}
-            >
-              {MONTHS.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-field">
-            <span className="form-field-label">
-              <Calendar size={14} /> Day of week
-            </span>
-            <select
-              value={form.day_of_week}
-              onChange={(e) => updateField("day_of_week", e.target.value)}
-            >
-              {DAYS_OF_WEEK.map((d) => (
-                <option key={d.value} value={d.value}>
-                  {d.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-field">
-            <span className="form-field-label">
-              <Clock size={14} /> Scheduled departure hour
-            </span>
-            <select
-              value={form.scheduled_hour}
-              onChange={(e) => updateField("scheduled_hour", e.target.value)}
-            >
-              {HOURS.map((h) => (
-                <option key={h} value={h}>
-                  {String(h).padStart(2, "0")}:00
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-field">
-            <span className="form-field-label">
-              <Ruler size={14} /> Distance (miles)
-            </span>
-            <input
-              type="number"
-              min="1"
-              value={form.distance}
-              onChange={(e) => updateField("distance", e.target.value)}
-              required
-            />
-          </label>
-        </div>
-
-        <button type="submit" className="submit-btn" disabled={status === "loading"}>
-          {status === "loading" ? (
-            <>
-              <Plane size={16} className="icon-fly" /> Predicting...
-            </>
-          ) : (
-            <>
-              <PlaneTakeoff size={16} /> Predict delay
-            </>
-          )}
-        </button>
-      </form>
-
-      {status === "error" && (
-        <div className="alert alert-error">Prediction failed: {error}</div>
-      )}
-
-      {status === "success" && result && (
-        <div
-          key={`${result.prediction}-${result.probability}`}
-          className={`result-card ${isDelayed ? "delayed" : "on-time"}`}
+        <section
+          ref={boardRef}
+          className={`board status-${status} ${isDelayed ? "is-delayed" : ""}`}
+          aria-label="Departure board"
         >
-          <div className="result-icon">
-            {isDelayed ? (
-              <AlertTriangle size={32} strokeWidth={2} />
-            ) : (
-              <CheckCircle size={32} strokeWidth={2} />
-            )}
+          <div className="board-row">
+            <div className="board-cell cell-time">
+              <span className="board-label">Time</span>
+              <SplitFlap value={`${String(form.scheduled_hour).padStart(2, "0")}:00`} length={5} />
+            </div>
+            <div className="board-cell cell-airline">
+              <span className="board-label">Airline</span>
+              <SplitFlap value={airlineCode} length={2} />
+            </div>
+            <div className="board-cell cell-from">
+              <span className="board-label">From</span>
+              <SplitFlap value={form.origin_airport} length={3} />
+            </div>
+            <div className="board-cell cell-month">
+              <span className="board-label">Month</span>
+              <SplitFlap value={MONTH_LABELS_SHORT[form.month]} length={3} />
+            </div>
+            <div className="board-cell cell-day">
+              <span className="board-label">Day</span>
+              <SplitFlap value={DAY_LABELS_SHORT[form.day_of_week]} length={3} />
+            </div>
+            <div className="board-cell cell-miles">
+              <span className="board-label">Miles</span>
+              <SplitFlap value={miles} length={4} align="right" />
+            </div>
+            <div className="board-cell cell-status" aria-live="polite">
+              <span className="board-label">Status</span>
+              <SplitFlap value={statusText} length={8} className="flap-status" />
+            </div>
+            <div className="board-cell cell-chance" aria-live="polite">
+              <span className="board-label">Delay chance</span>
+              <SplitFlap value={chanceText} length={5} align="right" className="flap-status" />
+            </div>
           </div>
-          <div className="result-verdict">
-            {isDelayed ? "Likely delayed" : "Likely on-time"}
+
+          {status === "idle" && (
+            <p className="board-message">
+              The board mirrors your flight below. Check it to flip the status.
+            </p>
+          )}
+          {status === "loading" && <p className="board-message">Asking the model…</p>}
+          {status === "success" && <p className="board-message">{result.confidence_note}</p>}
+          {status === "error" && (
+            <p className="board-message board-message-error" role="alert">
+              Prediction failed: {error}
+            </p>
+          )}
+        </section>
+
+        <form className="checkin" onSubmit={handleSubmit}>
+          <div className="checkin-head">
+            <h2 className="checkin-title">Your flight</h2>
+            <p className="checkin-lede">
+              Only details known before departure. Nothing measured after pushback goes into
+              the model.
+            </p>
           </div>
-          <div className="result-probability">
-            {(result.probability * 100).toFixed(1)}%
-            <span className="result-probability-label">predicted delay probability</span>
+
+          <div className="checkin-grid">
+            <label className="field field-airline">
+              <span className="board-label">Airline</span>
+              <select
+                value={form.airline}
+                onChange={(e) => updateField("airline", e.target.value)}
+                required
+              >
+                {metadata.airlines.map((a) => (
+                  <option key={a} value={a}>
+                    {a}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="field">
+              <span className="board-label">Origin airport</span>
+              <select
+                value={form.origin_airport}
+                onChange={(e) => updateField("origin_airport", e.target.value)}
+                required
+              >
+                {metadata.airports.map((code) => (
+                  <option key={code} value={code}>
+                    {code}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="field">
+              <span className="board-label">Departure hour</span>
+              <select
+                value={form.scheduled_hour}
+                onChange={(e) => updateField("scheduled_hour", e.target.value)}
+              >
+                {HOURS.map((h) => (
+                  <option key={h} value={h}>
+                    {String(h).padStart(2, "0")}:00
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="field">
+              <span className="board-label">Month</span>
+              <select value={form.month} onChange={(e) => updateField("month", e.target.value)}>
+                {MONTHS.map((m) => (
+                  <option key={m.value} value={m.value}>
+                    {m.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="field">
+              <span className="board-label">Day of week</span>
+              <select
+                value={form.day_of_week}
+                onChange={(e) => updateField("day_of_week", e.target.value)}
+              >
+                {DAYS_OF_WEEK.map((d) => (
+                  <option key={d.value} value={d.value}>
+                    {d.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="field">
+              <span className="board-label">Distance (miles)</span>
+              <input
+                type="number"
+                min="1"
+                max="9999"
+                inputMode="numeric"
+                value={form.distance}
+                onChange={(e) => updateField("distance", e.target.value)}
+                required
+              />
+            </label>
           </div>
-          <div className="result-note">{result.confidence_note}</div>
-        </div>
-      )}
+
+          <button type="submit" className="ghost-pill" disabled={status === "loading"}>
+            {status === "loading" ? "Checking…" : "Check status"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

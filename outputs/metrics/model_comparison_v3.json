@@ -1,0 +1,725 @@
+{
+  "dataset": "2015 only (flights_engineered.parquet) -- 2015+2016 data has no TAIL_NUMBER",
+  "train_rows": 4571463,
+  "test_rows": 1142545,
+  "class_weighting": "inverse-frequency (total / (2 * class_count))",
+  "class_weights": {
+    "1": 2.689048428557143,
+    "0": 0.6142048740167806
+  },
+  "threshold_sweep": "0.30-0.60 step 0.05; extended to 0.85 when best F1 hit 0.60",
+  "baseline_6_features": {
+    "model": "Random Forest (6 features, baseline)",
+    "features": [
+      "AIRLINE_INDEXED",
+      "ORIGIN_AIRPORT_INDEXED",
+      "MONTH",
+      "DAY_OF_WEEK",
+      "SCHEDULED_DEPARTURE_HOUR",
+      "DISTANCE"
+    ],
+    "auc": 0.6478,
+    "best_threshold": 0.5,
+    "precision": 0.2587,
+    "recall": 0.6375,
+    "f1": 0.368,
+    "threshold_sweep": [
+      {
+        "threshold": 0.3,
+        "precision": 0.1934,
+        "recall": 0.9852,
+        "f1": 0.3234,
+        "tp": 210274,
+        "fp": 876723,
+        "fn": 3150,
+        "tn": 52398
+      },
+      {
+        "threshold": 0.35,
+        "precision": 0.2037,
+        "recall": 0.9422,
+        "f1": 0.3349,
+        "tp": 201078,
+        "fp": 786181,
+        "fn": 12346,
+        "tn": 142940
+      },
+      {
+        "threshold": 0.4,
+        "precision": 0.2211,
+        "recall": 0.8601,
+        "f1": 0.3518,
+        "tp": 183564,
+        "fp": 646532,
+        "fn": 29860,
+        "tn": 282589
+      },
+      {
+        "threshold": 0.45,
+        "precision": 0.2406,
+        "recall": 0.752,
+        "f1": 0.3645,
+        "tp": 160504,
+        "fp": 506718,
+        "fn": 52920,
+        "tn": 422403
+      },
+      {
+        "threshold": 0.5,
+        "precision": 0.2587,
+        "recall": 0.6375,
+        "f1": 0.368,
+        "tp": 136055,
+        "fp": 389925,
+        "fn": 77369,
+        "tn": 539196
+      },
+      {
+        "threshold": 0.55,
+        "precision": 0.277,
+        "recall": 0.5085,
+        "f1": 0.3586,
+        "tp": 108517,
+        "fp": 283203,
+        "fn": 104907,
+        "tn": 645918
+      },
+      {
+        "threshold": 0.6,
+        "precision": 0.3044,
+        "recall": 0.3198,
+        "f1": 0.3119,
+        "tp": 68257,
+        "fp": 155980,
+        "fn": 145167,
+        "tn": 773141
+      }
+    ],
+    "feature_importances": {
+      "SCHEDULED_DEPARTURE_HOUR": 0.58,
+      "MONTH": 0.1739,
+      "AIRLINE_INDEXED": 0.1177,
+      "ORIGIN_AIRPORT_INDEXED": 0.0901,
+      "DAY_OF_WEEK": 0.0274,
+      "DISTANCE": 0.0109
+    }
+  },
+  "models_7_features": [
+    {
+      "model": "Logistic Regression (7 features)",
+      "features": [
+        "AIRLINE_INDEXED",
+        "ORIGIN_AIRPORT_INDEXED",
+        "MONTH",
+        "DAY_OF_WEEK",
+        "SCHEDULED_DEPARTURE_HOUR",
+        "DISTANCE",
+        "PREV_FLIGHT_DELAYED"
+      ],
+      "auc": 0.7306,
+      "best_threshold": 0.75,
+      "precision": 0.588,
+      "recall": 0.4378,
+      "f1": 0.5019,
+      "threshold_sweep": [
+        {
+          "threshold": 0.3,
+          "precision": 0.2143,
+          "recall": 0.9091,
+          "f1": 0.3469,
+          "tp": 194033,
+          "fp": 711340,
+          "fn": 19391,
+          "tn": 217781
+        },
+        {
+          "threshold": 0.35,
+          "precision": 0.248,
+          "recall": 0.8045,
+          "f1": 0.3791,
+          "tp": 171710,
+          "fp": 520745,
+          "fn": 41714,
+          "tn": 408376
+        },
+        {
+          "threshold": 0.4,
+          "precision": 0.2925,
+          "recall": 0.6952,
+          "f1": 0.4118,
+          "tp": 148369,
+          "fp": 358822,
+          "fn": 65055,
+          "tn": 570299
+        },
+        {
+          "threshold": 0.45,
+          "precision": 0.356,
+          "recall": 0.5926,
+          "f1": 0.4448,
+          "tp": 126471,
+          "fp": 228813,
+          "fn": 86953,
+          "tn": 700308
+        },
+        {
+          "threshold": 0.5,
+          "precision": 0.437,
+          "recall": 0.5184,
+          "f1": 0.4742,
+          "tp": 110640,
+          "fp": 142555,
+          "fn": 102784,
+          "tn": 786566
+        },
+        {
+          "threshold": 0.55,
+          "precision": 0.482,
+          "recall": 0.4948,
+          "f1": 0.4883,
+          "tp": 105603,
+          "fp": 113472,
+          "fn": 107821,
+          "tn": 815649
+        },
+        {
+          "threshold": 0.6,
+          "precision": 0.4927,
+          "recall": 0.4911,
+          "f1": 0.4919,
+          "tp": 104810,
+          "fp": 107922,
+          "fn": 108614,
+          "tn": 821199
+        },
+        {
+          "threshold": 0.65,
+          "precision": 0.496,
+          "recall": 0.4893,
+          "f1": 0.4926,
+          "tp": 104424,
+          "fp": 106108,
+          "fn": 109000,
+          "tn": 823013
+        },
+        {
+          "threshold": 0.7,
+          "precision": 0.5197,
+          "recall": 0.48,
+          "f1": 0.499,
+          "tp": 102436,
+          "fp": 94674,
+          "fn": 110988,
+          "tn": 834447
+        },
+        {
+          "threshold": 0.75,
+          "precision": 0.588,
+          "recall": 0.4378,
+          "f1": 0.5019,
+          "tp": 93442,
+          "fp": 65477,
+          "fn": 119982,
+          "tn": 863644
+        },
+        {
+          "threshold": 0.8,
+          "precision": 0.6274,
+          "recall": 0.3309,
+          "f1": 0.4333,
+          "tp": 70616,
+          "fp": 41934,
+          "fn": 142808,
+          "tn": 887187
+        },
+        {
+          "threshold": 0.85,
+          "precision": 0.6091,
+          "recall": 0.1411,
+          "f1": 0.2292,
+          "tp": 30123,
+          "fp": 19332,
+          "fn": 183301,
+          "tn": 909789
+        }
+      ],
+      "coefficients": {
+        "AIRLINE_INDEXED": 0.0188,
+        "ORIGIN_AIRPORT_INDEXED": -0.0011,
+        "MONTH": -0.0236,
+        "DAY_OF_WEEK": -0.0133,
+        "SCHEDULED_DEPARTURE_HOUR": 0.066,
+        "DISTANCE": 0.0001,
+        "PREV_FLIGHT_DELAYED": 1.9578
+      },
+      "sweep_extended_to_0.85": true
+    },
+    {
+      "model": "Decision Tree (7 features)",
+      "features": [
+        "AIRLINE_INDEXED",
+        "ORIGIN_AIRPORT_INDEXED",
+        "MONTH",
+        "DAY_OF_WEEK",
+        "SCHEDULED_DEPARTURE_HOUR",
+        "DISTANCE",
+        "PREV_FLIGHT_DELAYED"
+      ],
+      "auc": 0.642,
+      "best_threshold": 0.6,
+      "precision": 0.5891,
+      "recall": 0.4623,
+      "f1": 0.518,
+      "threshold_sweep": [
+        {
+          "threshold": 0.3,
+          "precision": 0.2229,
+          "recall": 0.8925,
+          "f1": 0.3567,
+          "tp": 190474,
+          "fp": 664034,
+          "fn": 22950,
+          "tn": 265087
+        },
+        {
+          "threshold": 0.35,
+          "precision": 0.2693,
+          "recall": 0.7789,
+          "f1": 0.4003,
+          "tp": 166243,
+          "fp": 450993,
+          "fn": 47181,
+          "tn": 478128
+        },
+        {
+          "threshold": 0.4,
+          "precision": 0.3071,
+          "recall": 0.7092,
+          "f1": 0.4286,
+          "tp": 151366,
+          "fp": 341561,
+          "fn": 62058,
+          "tn": 587560
+        },
+        {
+          "threshold": 0.45,
+          "precision": 0.3982,
+          "recall": 0.5954,
+          "f1": 0.4773,
+          "tp": 127076,
+          "fp": 192021,
+          "fn": 86348,
+          "tn": 737100
+        },
+        {
+          "threshold": 0.5,
+          "precision": 0.4707,
+          "recall": 0.5342,
+          "f1": 0.5005,
+          "tp": 114020,
+          "fp": 128205,
+          "fn": 99404,
+          "tn": 800916
+        },
+        {
+          "threshold": 0.55,
+          "precision": 0.5386,
+          "recall": 0.491,
+          "f1": 0.5137,
+          "tp": 104789,
+          "fp": 89765,
+          "fn": 108635,
+          "tn": 839356
+        },
+        {
+          "threshold": 0.6,
+          "precision": 0.5891,
+          "recall": 0.4623,
+          "f1": 0.518,
+          "tp": 98660,
+          "fp": 68823,
+          "fn": 114764,
+          "tn": 860298
+        },
+        {
+          "threshold": 0.65,
+          "precision": 0.5987,
+          "recall": 0.4556,
+          "f1": 0.5174,
+          "tp": 97234,
+          "fp": 65183,
+          "fn": 116190,
+          "tn": 863938
+        },
+        {
+          "threshold": 0.7,
+          "precision": 0.6117,
+          "recall": 0.4457,
+          "f1": 0.5157,
+          "tp": 95116,
+          "fp": 60372,
+          "fn": 118308,
+          "tn": 868749
+        },
+        {
+          "threshold": 0.75,
+          "precision": 0.6178,
+          "recall": 0.4398,
+          "f1": 0.5139,
+          "tp": 93874,
+          "fp": 58069,
+          "fn": 119550,
+          "tn": 871052
+        },
+        {
+          "threshold": 0.8,
+          "precision": 0.6292,
+          "recall": 0.4194,
+          "f1": 0.5033,
+          "tp": 89501,
+          "fp": 52745,
+          "fn": 123923,
+          "tn": 876376
+        },
+        {
+          "threshold": 0.85,
+          "precision": 0.6358,
+          "recall": 0.4068,
+          "f1": 0.4961,
+          "tp": 86811,
+          "fp": 49731,
+          "fn": 126613,
+          "tn": 879390
+        }
+      ],
+      "feature_importances": {
+        "PREV_FLIGHT_DELAYED": 0.7622,
+        "SCHEDULED_DEPARTURE_HOUR": 0.1507,
+        "ORIGIN_AIRPORT_INDEXED": 0.0411,
+        "AIRLINE_INDEXED": 0.0181,
+        "MONTH": 0.0165,
+        "DISTANCE": 0.0109,
+        "DAY_OF_WEEK": 0.0005
+      },
+      "sweep_extended_to_0.85": true
+    },
+    {
+      "model": "Random Forest (7 features)",
+      "features": [
+        "AIRLINE_INDEXED",
+        "ORIGIN_AIRPORT_INDEXED",
+        "MONTH",
+        "DAY_OF_WEEK",
+        "SCHEDULED_DEPARTURE_HOUR",
+        "DISTANCE",
+        "PREV_FLIGHT_DELAYED"
+      ],
+      "auc": 0.7545,
+      "best_threshold": 0.6,
+      "precision": 0.6012,
+      "recall": 0.4564,
+      "f1": 0.5189,
+      "threshold_sweep": [
+        {
+          "threshold": 0.3,
+          "precision": 0.2055,
+          "recall": 0.9527,
+          "f1": 0.338,
+          "tp": 203319,
+          "fp": 786287,
+          "fn": 10105,
+          "tn": 142834
+        },
+        {
+          "threshold": 0.35,
+          "precision": 0.2622,
+          "recall": 0.8076,
+          "f1": 0.3959,
+          "tp": 172356,
+          "fp": 484950,
+          "fn": 41068,
+          "tn": 444171
+        },
+        {
+          "threshold": 0.4,
+          "precision": 0.3338,
+          "recall": 0.6732,
+          "f1": 0.4463,
+          "tp": 143684,
+          "fp": 286720,
+          "fn": 69740,
+          "tn": 642401
+        },
+        {
+          "threshold": 0.45,
+          "precision": 0.4257,
+          "recall": 0.5716,
+          "f1": 0.488,
+          "tp": 122001,
+          "fp": 164604,
+          "fn": 91423,
+          "tn": 764517
+        },
+        {
+          "threshold": 0.5,
+          "precision": 0.5395,
+          "recall": 0.4947,
+          "f1": 0.5161,
+          "tp": 105584,
+          "fp": 90114,
+          "fn": 107840,
+          "tn": 839007
+        },
+        {
+          "threshold": 0.55,
+          "precision": 0.5888,
+          "recall": 0.4637,
+          "f1": 0.5188,
+          "tp": 98957,
+          "fp": 69115,
+          "fn": 114467,
+          "tn": 860006
+        },
+        {
+          "threshold": 0.6,
+          "precision": 0.6012,
+          "recall": 0.4564,
+          "f1": 0.5189,
+          "tp": 97403,
+          "fp": 64617,
+          "fn": 116021,
+          "tn": 864504
+        },
+        {
+          "threshold": 0.65,
+          "precision": 0.6078,
+          "recall": 0.4496,
+          "f1": 0.5169,
+          "tp": 95954,
+          "fp": 61923,
+          "fn": 117470,
+          "tn": 867198
+        },
+        {
+          "threshold": 0.7,
+          "precision": 0.6109,
+          "recall": 0.4457,
+          "f1": 0.5154,
+          "tp": 95117,
+          "fp": 60580,
+          "fn": 118307,
+          "tn": 868541
+        },
+        {
+          "threshold": 0.75,
+          "precision": 0.6147,
+          "recall": 0.4423,
+          "f1": 0.5144,
+          "tp": 94390,
+          "fp": 59176,
+          "fn": 119034,
+          "tn": 869945
+        },
+        {
+          "threshold": 0.8,
+          "precision": 0.628,
+          "recall": 0.429,
+          "f1": 0.5098,
+          "tp": 91563,
+          "fp": 54236,
+          "fn": 121861,
+          "tn": 874885
+        },
+        {
+          "threshold": 0.85,
+          "precision": 0.6562,
+          "recall": 0.3679,
+          "f1": 0.4715,
+          "tp": 78524,
+          "fp": 41145,
+          "fn": 134900,
+          "tn": 887976
+        }
+      ],
+      "feature_importances": {
+        "PREV_FLIGHT_DELAYED": 0.7721,
+        "SCHEDULED_DEPARTURE_HOUR": 0.1546,
+        "ORIGIN_AIRPORT_INDEXED": 0.0293,
+        "MONTH": 0.02,
+        "AIRLINE_INDEXED": 0.0135,
+        "DISTANCE": 0.0097,
+        "DAY_OF_WEEK": 0.0008
+      },
+      "sweep_extended_to_0.85": true
+    },
+    {
+      "model": "Gradient Boosted Trees (7 features)",
+      "features": [
+        "AIRLINE_INDEXED",
+        "ORIGIN_AIRPORT_INDEXED",
+        "MONTH",
+        "DAY_OF_WEEK",
+        "SCHEDULED_DEPARTURE_HOUR",
+        "DISTANCE",
+        "PREV_FLIGHT_DELAYED"
+      ],
+      "auc": 0.7773,
+      "best_threshold": 0.6,
+      "precision": 0.5734,
+      "recall": 0.4863,
+      "f1": 0.5263,
+      "threshold_sweep": [
+        {
+          "threshold": 0.3,
+          "precision": 0.2411,
+          "recall": 0.8961,
+          "f1": 0.38,
+          "tp": 191250,
+          "fp": 601857,
+          "fn": 22174,
+          "tn": 327264
+        },
+        {
+          "threshold": 0.35,
+          "precision": 0.2783,
+          "recall": 0.8199,
+          "f1": 0.4155,
+          "tp": 174993,
+          "fp": 453851,
+          "fn": 38431,
+          "tn": 475270
+        },
+        {
+          "threshold": 0.4,
+          "precision": 0.3268,
+          "recall": 0.735,
+          "f1": 0.4524,
+          "tp": 156860,
+          "fp": 323124,
+          "fn": 56564,
+          "tn": 605997
+        },
+        {
+          "threshold": 0.45,
+          "precision": 0.3852,
+          "recall": 0.6546,
+          "f1": 0.485,
+          "tp": 139705,
+          "fp": 222945,
+          "fn": 73719,
+          "tn": 706176
+        },
+        {
+          "threshold": 0.5,
+          "precision": 0.4515,
+          "recall": 0.5838,
+          "f1": 0.5092,
+          "tp": 124587,
+          "fp": 151345,
+          "fn": 88837,
+          "tn": 777776
+        },
+        {
+          "threshold": 0.55,
+          "precision": 0.52,
+          "recall": 0.5254,
+          "f1": 0.5227,
+          "tp": 112126,
+          "fp": 103481,
+          "fn": 101298,
+          "tn": 825640
+        },
+        {
+          "threshold": 0.6,
+          "precision": 0.5734,
+          "recall": 0.4863,
+          "f1": 0.5263,
+          "tp": 103783,
+          "fp": 77217,
+          "fn": 109641,
+          "tn": 851904
+        },
+        {
+          "threshold": 0.65,
+          "precision": 0.6031,
+          "recall": 0.4627,
+          "f1": 0.5236,
+          "tp": 98749,
+          "fp": 64996,
+          "fn": 114675,
+          "tn": 864125
+        },
+        {
+          "threshold": 0.7,
+          "precision": 0.6215,
+          "recall": 0.447,
+          "f1": 0.52,
+          "tp": 95400,
+          "fp": 58106,
+          "fn": 118024,
+          "tn": 871015
+        },
+        {
+          "threshold": 0.75,
+          "precision": 0.6376,
+          "recall": 0.4328,
+          "f1": 0.5156,
+          "tp": 92375,
+          "fp": 52512,
+          "fn": 121049,
+          "tn": 876609
+        },
+        {
+          "threshold": 0.8,
+          "precision": 0.6602,
+          "recall": 0.4062,
+          "f1": 0.503,
+          "tp": 86700,
+          "fp": 44633,
+          "fn": 126724,
+          "tn": 884488
+        },
+        {
+          "threshold": 0.85,
+          "precision": 0.7033,
+          "recall": 0.3336,
+          "f1": 0.4525,
+          "tp": 71189,
+          "fp": 30028,
+          "fn": 142235,
+          "tn": 899093
+        }
+      ],
+      "feature_importances": {
+        "PREV_FLIGHT_DELAYED": 0.32,
+        "ORIGIN_AIRPORT_INDEXED": 0.3137,
+        "SCHEDULED_DEPARTURE_HOUR": 0.1223,
+        "MONTH": 0.0864,
+        "AIRLINE_INDEXED": 0.0756,
+        "DISTANCE": 0.0437,
+        "DAY_OF_WEEK": 0.0385
+      },
+      "sweep_extended_to_0.85": true
+    }
+  ],
+  "delta_vs_baseline": {
+    "Logistic Regression (7 features)": {
+      "auc": 0.0828,
+      "f1": 0.1339
+    },
+    "Decision Tree (7 features)": {
+      "auc": -0.0058,
+      "f1": 0.15
+    },
+    "Random Forest (7 features)": {
+      "auc": 0.1067,
+      "f1": 0.1509
+    },
+    "Gradient Boosted Trees (7 features)": {
+      "auc": 0.1295,
+      "f1": 0.1583
+    }
+  },
+  "prev_flight_delayed_rank_in_rf": 1,
+  "reference_2015_2016_rf_auc_not_comparable": 0.6491
+}

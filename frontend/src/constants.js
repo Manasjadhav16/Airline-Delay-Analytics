@@ -33,3 +33,22 @@ export const DAY_LABELS_SHORT = {
 };
 
 export const HOURS = Array.from({ length: 24 }, (_, i) => i);
+
+// IATA codes from data/raw/airlines.csv, used only to label the departure
+// board. The API itself takes the full airline name.
+export const AIRLINE_CODES = {
+  "United Air Lines Inc.": "UA",
+  "American Airlines Inc.": "AA",
+  "US Airways Inc.": "US",
+  "Frontier Airlines Inc.": "F9",
+  "JetBlue Airways": "B6",
+  "Skywest Airlines Inc.": "OO",
+  "Alaska Airlines Inc.": "AS",
+  "Spirit Air Lines": "NK",
+  "Southwest Airlines Co.": "WN",
+  "Delta Air Lines Inc.": "DL",
+  "Atlantic Southeast Airlines": "EV",
+  "Hawaiian Airlines Inc.": "HA",
+  "American Eagle Airlines Inc.": "MQ",
+  "Virgin America": "VX",
+};

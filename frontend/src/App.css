@@ -462,3 +462,80 @@ main {
   border-radius: 999px;
   background: linear-gradient(90deg, #0284c7, #b45309);
 }
+
+/* Predict tab: the departure board runs edge to edge on black, so the nav
+   switches to DESIGN.md's overlay treatment to match. */
+
+.app-board {
+  background: #000000;
+}
+
+.app-board main {
+  padding: 0;
+}
+
+.app-board .nav {
+  background: #000000;
+  backdrop-filter: none;
+  border-bottom-color: #3a3a3f;
+  box-shadow: none;
+  font-family: "D-DIN", "Arial Narrow", Arial, sans-serif;
+}
+
+.app-board .nav-brand {
+  color: #ffffff;
+  font-size: 13.008px;
+  letter-spacing: 1.17px;
+  text-transform: uppercase;
+}
+
+.app-board .nav-tab {
+  font-family: inherit;
+  font-size: 13.008px;
+  font-weight: 700;
+  letter-spacing: 1.17px;
+  text-transform: uppercase;
+  color: #f0f0fa;
+  border: 1px solid transparent;
+  border-radius: 32px;
+}
+
+.app-board .nav-tab:hover {
+  background: transparent;
+  border-color: #3a3a3f;
+}
+
+.app-board .nav-tab.active {
+  background: transparent;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+
+.app-board .nav-tab:focus-visible {
+  outline: 2px solid #f5a623;
+  outline-offset: 2px;
+}
+
+.app-board .nav-brand {
+  white-space: nowrap;
+}
+
+@media (max-width: 599px) {
+  .app-board .nav {
+    padding: 12px 16px;
+  }
+
+  .app-board .nav-tab {
+    padding: 0.5rem 0.85rem;
+  }
+
+  /* Not enough room for the wordmark beside both tabs; keep the glyph. */
+  .app-board .nav-brand span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+}
