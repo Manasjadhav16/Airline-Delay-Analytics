@@ -226,6 +226,69 @@ def get_airport_map():
     return merged.to_dict(orient="records")
 
 
+def read_aggregate_csv(name):
+    matches = glob.glob(f"{PROCESSED_DIR}/{name}.csv/part-*.csv")
+    if not matches:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No {name} data found — has src/aggregate_dashboard_v2.py been run?",
+        )
+    return pd.read_csv(matches[0])
+
+
+def dow_hour_records(df):
+    df = df.rename(columns={"DAY_OF_WEEK": "day_of_week", "SCHEDULED_DEPARTURE_HOUR": "hour"})
+    return df[["day_of_week", "hour", "total_flights", "total_delayed", "delay_pct"]].to_dict(
+        orient="records"
+    )
+
+
+@app.get("/stats/dow-hour")
+def get_dow_hour():
+    """National day-of-week x scheduled-departure-hour delay grid."""
+    return dow_hour_records(read_aggregate_csv("agg_by_dow_hour_v2"))
+
+
+@app.get("/stats/delay-minutes")
+def get_delay_minutes():
+    """Mean/median ARRIVAL_DELAY summary from src/aggregate_dashboard_v2.py."""
+    try:
+        with open(f"{METRICS_DIR}/delay_minutes_v2.json") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise HTTPException(
+            status_code=404,
+            detail="No delay-minutes data found — has src/aggregate_dashboard_v2.py been run?",
+        )
+
+
+@app.get("/stats/airport/{code}")
+def get_airport_breakdown(code: str):
+    """One busy airport's delay rate by airline, hour, day of week, month and
+    the weekday x hour grid -- the same shapes as the national endpoints."""
+    code = code.upper()
+    breakdown = read_aggregate_csv("agg_airport_breakdown_v2")
+    breakdown = breakdown[breakdown["ORIGIN_AIRPORT"] == code]
+    if breakdown.empty:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No breakdown for '{code}' — only airports with 10,000+ flights have one.",
+        )
+
+    result = {"airport": code}
+    for dimension in ["airline", "hour", "dayofweek", "month"]:
+        rows = breakdown[breakdown["dimension"] == dimension]
+        if dimension != "airline":
+            rows = rows.assign(name=rows["name"].astype(int))
+        result[dimension] = rows[["name", "total_flights", "total_delayed", "delay_pct"]].to_dict(
+            orient="records"
+        )
+
+    grid = read_aggregate_csv("agg_airport_dow_hour_v2")
+    result["dow_hour"] = dow_hour_records(grid[grid["ORIGIN_AIRPORT"] == code])
+    return result
+
+
 # NOTE: this route must stay registered BEFORE /stats/{category} below --
 # otherwise the parameterized route would swallow "/stats/model-comparison"
 # requests as category="model-comparison" and 404 them there instead.

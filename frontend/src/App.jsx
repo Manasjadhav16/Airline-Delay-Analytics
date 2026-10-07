@@ -8,7 +8,7 @@ function App() {
   const [activeTab, setActiveTab] = useState("predict");
 
   return (
-    <div className={`app ${activeTab === "predict" ? "app-board" : ""}`}>
+    <div className="app">
       <Nav activeTab={activeTab} onTabChange={setActiveTab} />
       <main>
         <div className="page-transition" key={activeTab}>

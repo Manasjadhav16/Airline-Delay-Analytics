@@ -1,0 +1,539 @@
+/* Dashboard: ARRIVALS ops briefing. Shared tokens and type styles live in
+   index.css; this file only lays out the dashboard's own pieces. */
+
+.dash-page {
+  min-height: calc(100dvh - var(--nav-h));
+}
+
+.dash-hero-head {
+  padding-bottom: 24px;
+}
+
+.dash-hero-head .lede {
+  margin-top: 16px;
+}
+
+.dash-body {
+  padding-top: 24px;
+}
+
+.dash-state {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 32px;
+  padding: 24px;
+}
+
+.dash-error {
+  color: var(--amber);
+}
+
+/* Hero map: full-bleed, the map is the band */
+
+.dash-map {
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.map-frame {
+  position: relative;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.map-frame svg {
+  display: block;
+}
+
+.map-hover {
+  position: absolute;
+  left: 32px;
+  bottom: 16px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 2;
+  letter-spacing: 0.96px;
+  text-transform: uppercase;
+  color: var(--on-primary-mute);
+  pointer-events: none;
+}
+
+.map-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px 32px;
+}
+
+.map-legend {
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  gap: 4px 16px;
+}
+
+.map-legend-scale,
+.heatmap-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--on-primary-mute);
+}
+
+.map-legend-gradient {
+  display: inline-block;
+  width: 120px;
+  height: 8px;
+  border-radius: 2px;
+}
+
+.airport-filter {
+  display: flex;
+  flex-direction: column;
+  min-width: 240px;
+}
+
+.airport-filter select {
+  min-height: 44px;
+  padding: 12px 40px 12px 16px;
+  font-family: inherit;
+  font-size: 16px;
+  color: var(--on-primary);
+  background-color: var(--canvas-night-soft);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='%23ffffff' stroke-width='1.5'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+  appearance: none;
+  transition: border-color 200ms;
+}
+
+.airport-filter select:hover {
+  border-color: var(--label);
+}
+
+.map-readout {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 12px;
+  margin: 20px 0 0;
+  padding: 12px 16px;
+  font-size: 16px;
+  color: var(--on-primary-mute);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+
+.map-readout strong {
+  font-size: 13.008px;
+  letter-spacing: 1.17px;
+  color: var(--on-primary);
+}
+
+.map-readout-rate {
+  color: var(--amber);
+}
+
+.text-button {
+  margin-left: auto;
+  padding: 4px 0;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: 0.96px;
+  text-transform: uppercase;
+  color: var(--on-primary);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* KPI flap row */
+
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--hairline);
+}
+
+.kpi {
+  --tile-w: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.kpi .flap-tiles {
+  flex-wrap: wrap;
+  row-gap: 4px;
+}
+
+.kpi-caption {
+  max-width: 32ch;
+  margin: 4px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--on-primary-mute);
+  text-wrap: pretty;
+}
+
+/* Section header with the airport flap */
+
+.section-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.focus-board {
+  --tile-w: 28px;
+  flex-shrink: 0;
+}
+
+/* Charts */
+
+.chart-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.chart-card {
+  margin: 0;
+  padding: 20px 20px 16px;
+  min-width: 0;
+}
+
+.chart-card-wide {
+  grid-column: 1 / -1;
+}
+
+.chart-card-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+}
+
+.chart-card-title {
+  color: var(--on-primary-mute);
+}
+
+.chart-legend {
+  display: inline-flex;
+  gap: 16px;
+  font-size: 12px;
+  letter-spacing: 0.96px;
+  color: var(--on-primary-mute);
+}
+
+.chart-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chart-swatch {
+  display: inline-block;
+  width: 12px;
+  height: 3px;
+  border-radius: 2px;
+  border: 0 solid;
+}
+
+.chart-swatch-dashed {
+  height: 0;
+  border-top-width: 2px;
+  border-top-style: dashed;
+  border-radius: 0;
+}
+
+.chart-note {
+  margin: 12px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--label);
+}
+
+.chart-note strong {
+  color: var(--on-primary);
+}
+
+.chart-tooltip {
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--on-primary);
+  background: var(--canvas-night);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+
+.chart-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  line-height: 1.7;
+}
+
+.chart-tooltip-flights {
+  color: var(--label);
+}
+
+/* Axis labels: DIN with tabular figures (DESIGN.md rules out mono) */
+.recharts-cartesian-axis-tick text {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.5px;
+}
+
+.recharts-wrapper:focus,
+.recharts-surface:focus {
+  outline: none;
+}
+
+/* Weekday x hour heatmap */
+
+.heatmap-card {
+  margin: 0;
+  padding: 20px;
+}
+
+.heatmap {
+  display: grid;
+  grid-template-columns: 40px repeat(24, minmax(0, 1fr));
+  gap: 2px;
+}
+
+.heatmap-row {
+  display: contents;
+}
+
+.heatmap-hour,
+.heatmap-day {
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: var(--label);
+}
+
+.heatmap-hour {
+  padding-bottom: 4px;
+}
+
+.heatmap-day {
+  align-self: center;
+}
+
+.heatmap-cell {
+  aspect-ratio: 1.6;
+  border-radius: 2px;
+}
+
+.heatmap-cell-empty {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--hairline) 0 1px,
+    transparent 1px 4px
+  );
+}
+
+.heatmap-cell:hover {
+  outline: 1px solid var(--on-primary);
+  outline-offset: 0;
+}
+
+.heatmap-readout {
+  min-height: 1.5em;
+  color: var(--on-primary-mute);
+}
+
+/* Model comparison table */
+
+.model-card {
+  margin-top: 24px;
+  padding: 20px;
+  overflow-x: auto;
+}
+
+.model-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.model-table th,
+.model-table td {
+  padding: 12px 16px 12px 0;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--hairline);
+}
+
+.model-table thead th {
+  /* .board-label is display:block for spans; keep these as table cells */
+  display: table-cell;
+  padding-top: 0;
+}
+
+.model-table tbody th {
+  font-size: 16px;
+  font-weight: 400;
+  white-space: nowrap;
+  color: var(--label);
+}
+
+.model-best th {
+  color: var(--on-primary);
+}
+
+.model-flag {
+  margin-left: 12px;
+  padding: 2px 8px;
+  font-size: 11px;
+  letter-spacing: 0.96px;
+  text-transform: uppercase;
+  border: 1px solid var(--on-primary);
+  border-radius: 2px;
+}
+
+.model-value {
+  display: block;
+  font-size: 16px;
+  color: var(--label);
+}
+
+.model-best .model-value {
+  color: var(--on-primary);
+}
+
+.model-bar {
+  display: block;
+  width: 100%;
+  max-width: 140px;
+  height: 3px;
+  margin-top: 6px;
+  background: var(--tile);
+}
+
+.model-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--label);
+}
+
+.model-best .model-bar > span {
+  background: var(--on-primary);
+}
+
+/* Responsive */
+
+@media (max-width: 1279px) {
+  .kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 960px) {
+  .chart-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .section-head {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 767px) {
+  .map-hover {
+    position: static;
+    padding: 8px 16px 0;
+  }
+
+  .airport-filter {
+    width: 100%;
+  }
+
+  .heatmap-card,
+  .chart-card {
+    padding: 16px 12px;
+  }
+
+  .heatmap {
+    grid-template-columns: 30px repeat(24, minmax(0, 1fr));
+    gap: 1px;
+  }
+
+  .heatmap-hour,
+  .heatmap-day {
+    font-size: 9px;
+  }
+
+  .heatmap-cell {
+    aspect-ratio: 0.8;
+  }
+}
+
+@media (max-width: 599px) {
+  .kpi-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .kpi {
+    --tile-w: 22px;
+  }
+
+  .focus-board {
+    --tile-w: 22px;
+  }
+
+  /* Model table: one block per model, metrics labelled inline */
+  .model-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+
+  .model-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .model-table tbody th,
+  .model-table tbody td {
+    padding: 0;
+    border: 0;
+  }
+
+  .model-table tbody th {
+    grid-column: 1 / -1;
+  }
+
+  .model-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 12px;
+    line-height: 2;
+    letter-spacing: 0.96px;
+    text-transform: uppercase;
+    color: var(--label);
+  }
+}

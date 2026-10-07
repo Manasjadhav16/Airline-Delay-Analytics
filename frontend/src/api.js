@@ -42,3 +42,18 @@ export async function predictDelay(payload) {
   });
   return handleResponse(response);
 }
+
+export async function fetchDowHour() {
+  const response = await fetch(`${API_BASE_URL}/stats/dow-hour`);
+  return handleResponse(response);
+}
+
+export async function fetchDelayMinutes() {
+  const response = await fetch(`${API_BASE_URL}/stats/delay-minutes`);
+  return handleResponse(response);
+}
+
+export async function fetchAirportBreakdown(code) {
+  const response = await fetch(`${API_BASE_URL}/stats/airport/${encodeURIComponent(code)}`);
+  return handleResponse(response);
+}

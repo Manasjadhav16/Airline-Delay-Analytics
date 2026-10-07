@@ -14,3 +14,5 @@ backend/model/*.joblib
 claude.md 
 .claude/
 data/raw_v2/
+# Playwright CLI output (may contain credentials)
+.playwright-cli/

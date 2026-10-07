@@ -1,57 +1,8 @@
-/* Predict page: airport departure board.
-   Tokens follow DESIGN.md; amber is the project's single accent override. */
+/* Predict page: airport departure board. Shared tokens and type styles
+   live in index.css. */
 
 .board-page {
-  --canvas-night: #000000;
-  --canvas-night-soft: #0a0a0a;
-  --hairline: #3a3a3f;
-  --on-primary: #ffffff;
-  --on-primary-mute: #f0f0fa;
-  --label: #8c8c94;
-  --amber: #f5a623;
-  --tile: #161619;
-  --seam: #000000;
-
-  --font-din: "D-DIN", "Arial Narrow", Arial, Verdana, sans-serif;
-
-  --tile-w: 26px;
-  --tile-h: calc(var(--tile-w) * 1.45);
-  --tile-gap: 2px;
-
-  min-height: calc(100dvh - 65px);
-  background: var(--canvas-night);
-  color: var(--on-primary);
-  font-family: var(--font-din);
-  font-variant-numeric: tabular-nums;
-}
-
-.board-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 48px 32px 64px;
-}
-
-/* Shared micro-cap label (DESIGN typography.micro-cap) */
-.board-label {
-  display: block;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 2;
-  letter-spacing: 0.96px;
-  text-transform: uppercase;
-  color: var(--label);
-}
-
-.visually-hidden {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  margin: -1px;
-  padding: 0;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-  white-space: nowrap;
-  border: 0;
+  min-height: calc(100dvh - var(--nav-h));
 }
 
 /* Header */
@@ -64,24 +15,6 @@
   padding-bottom: 24px;
   margin-bottom: 32px;
   border-bottom: 1px solid var(--hairline);
-}
-
-.board-eyebrow {
-  margin: 0 0 12px;
-  font-size: 12px;
-  line-height: 2;
-  letter-spacing: 0.96px;
-  text-transform: uppercase;
-  color: var(--amber);
-}
-
-.board-title {
-  margin: 0;
-  font-size: 80px;
-  font-weight: 700;
-  line-height: 0.95;
-  letter-spacing: 1.6px;
-  text-transform: uppercase;
 }
 
 .board-clock {
@@ -130,81 +63,6 @@
   color: var(--amber);
 }
 
-/* Split-flap tiles */
-
-.flap-tiles {
-  display: inline-flex;
-  gap: var(--tile-gap);
-}
-
-.flap-tile {
-  position: relative;
-  display: block;
-  width: var(--tile-w);
-  height: var(--tile-h);
-  perspective: calc(var(--tile-h) * 6);
-  font-size: calc(var(--tile-w) * 0.95);
-  font-weight: 700;
-  color: var(--on-primary);
-}
-
-.flap-half {
-  position: absolute;
-  left: 0;
-  right: 0;
-  height: 50%;
-  overflow: hidden;
-  background: var(--tile);
-  backface-visibility: hidden;
-}
-
-.flap-half > span {
-  display: block;
-  height: var(--tile-h);
-  line-height: var(--tile-h);
-  text-align: center;
-}
-
-.flap-top {
-  top: 0;
-  border-radius: 3px 3px 0 0;
-}
-
-.flap-bottom {
-  bottom: 0;
-  border-top: 1px solid var(--seam);
-  border-radius: 0 0 3px 3px;
-}
-
-.flap-bottom > span {
-  transform: translateY(calc(var(--tile-h) / -2));
-}
-
-.flap-fold {
-  z-index: 2;
-  transform-origin: bottom;
-  animation: flap-fold 70ms ease-in forwards;
-}
-
-.flap-unfold {
-  z-index: 2;
-  transform-origin: top;
-  transform: rotateX(90deg);
-  animation: flap-unfold 70ms ease-out 70ms forwards;
-}
-
-@keyframes flap-fold {
-  to {
-    transform: rotateX(-90deg);
-  }
-}
-
-@keyframes flap-unfold {
-  to {
-    transform: rotateX(0deg);
-  }
-}
-
 .board.is-delayed .flap-status .flap-tile {
   color: var(--amber);
 }
@@ -222,22 +80,8 @@
   margin-top: 48px;
 }
 
-.checkin-title {
-  margin: 0 0 12px;
-  font-size: 48px;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: 0.96px;
-  text-transform: uppercase;
-}
-
 .checkin-lede {
   max-width: 36ch;
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.5;
-  letter-spacing: 0.32px;
-  color: var(--on-primary-mute);
 }
 
 .checkin-grid {
@@ -292,64 +136,20 @@
   border-color: var(--amber);
 }
 
-/* DESIGN button-ghost-on-dark */
-.ghost-pill {
+/* Ghost pill itself is in index.css; this only places it in the grid. */
+.checkin .ghost-pill {
   grid-column: 2;
   justify-self: start;
-  padding: 18px 24px;
-  font-family: inherit;
-  font-size: 13.008px;
-  font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: 1.17px;
-  text-transform: uppercase;
-  color: var(--on-primary);
-  background: transparent;
-  border: 1px solid var(--on-primary);
-  border-radius: 32px;
-  cursor: pointer;
-  transition: background-color 200ms, color 200ms, transform 100ms;
-}
-
-.ghost-pill:hover:not(:disabled) {
-  background: var(--on-primary-mute);
-  color: var(--canvas-night);
-}
-
-.ghost-pill:active:not(:disabled) {
-  transform: translateY(1px);
-}
-
-.ghost-pill:focus-visible {
-  outline: 2px solid var(--amber);
-  outline-offset: 3px;
-}
-
-.ghost-pill:disabled {
-  border-color: var(--label);
-  color: var(--label);
-  cursor: progress;
 }
 
 /* Responsive */
 
-@media (max-width: 1279px) {
-  .board-page {
-    --tile-w: 22px;
-  }
-}
-
 @media (max-width: 960px) {
-  .board-title {
-    font-size: 60px;
-    line-height: 1.2;
-  }
-
   .checkin {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .ghost-pill {
+  .checkin .ghost-pill {
     grid-column: 1;
   }
 
@@ -359,19 +159,6 @@
 }
 
 @media (max-width: 767px) {
-  .board-inner {
-    padding: 32px 16px 48px;
-  }
-
-  .board-title {
-    font-size: 48px;
-    line-height: 1.25;
-  }
-
-  .checkin-title {
-    font-size: 40px;
-  }
-
   .checkin-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -386,10 +173,6 @@
 }
 
 @media (max-width: 599px) {
-  .board-page {
-    --tile-w: 20px;
-  }
-
   .board-head {
     flex-direction: column;
     align-items: flex-start;
@@ -399,19 +182,8 @@
     text-align: left;
   }
 
-  .board-title {
-    font-size: 40px;
-  }
-
-  .ghost-pill {
+  .checkin .ghost-pill {
     justify-self: stretch;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .flap-fold,
-  .flap-unfold {
-    animation: none;
-    display: none;
-  }
-}

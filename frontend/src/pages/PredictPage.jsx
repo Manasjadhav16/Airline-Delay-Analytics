@@ -103,7 +103,7 @@ export default function PredictPage() {
   if (metadataError) {
     return (
       <div className="board-page">
-        <div className="board-inner">
+        <div className="page-inner">
           <p className="board-eyebrow">Departures</p>
           <h1 className="board-title">Board offline</h1>
           <p className="board-message board-message-error" role="alert">
@@ -128,7 +128,7 @@ export default function PredictPage() {
 
   return (
     <div className="board-page">
-      <div className="board-inner">
+      <div className="page-inner">
         <header className="board-head">
           <div>
             <p className="board-eyebrow">Delay forecast · 2015–2016 U.S. domestic flights</p>
@@ -196,8 +196,8 @@ export default function PredictPage() {
 
         <form className="checkin" onSubmit={handleSubmit}>
           <div className="checkin-head">
-            <h2 className="checkin-title">Your flight</h2>
-            <p className="checkin-lede">
+            <h2 className="section-title">Your flight</h2>
+            <p className="lede checkin-lede">
               Only details known before departure. Nothing measured after pushback goes into
               the model.
             </p>

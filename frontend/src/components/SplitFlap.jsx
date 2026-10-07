@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import "./SplitFlap.css";
 
 // Order the drum spins through. Each tile only moves forward, like a real
 // Solari board, so a change from "B" to "A" goes all the way round.
@@ -18,11 +19,11 @@ function display(ch) {
   return ch === " " ? " " : ch;
 }
 
-function FlapTile({ target, delay }) {
-  const [shown, setShown] = useState(target);
-  const [prev, setPrev] = useState(target);
+function FlapTile({ target, delay, start }) {
+  const [shown, setShown] = useState(start);
+  const [prev, setPrev] = useState(start);
   const [flipCount, setFlipCount] = useState(0);
-  const shownRef = useRef(target);
+  const shownRef = useRef(start);
 
   useEffect(() => {
     if (prefersReducedMotion()) {
@@ -72,9 +73,17 @@ function FlapTile({ target, delay }) {
 /**
  * A word on the board: `length` tiles, padded with blanks. Tiles start
  * flipping left to right, `stagger` ms apart. Screen readers get the plain
- * text instead of the individual tiles.
+ * text instead of the individual tiles. With `animateIn`, tiles start blank
+ * and spin up to their value on mount instead of appearing already set.
  */
-export default function SplitFlap({ value, length, align = "left", stagger = 45, className = "" }) {
+export default function SplitFlap({
+  value,
+  length,
+  align = "left",
+  stagger = 45,
+  animateIn = false,
+  className = "",
+}) {
   const raw = String(value ?? "").slice(0, length);
   const padded = align === "right" ? raw.padStart(length) : raw.padEnd(length);
   const chars = [...padded].map(normalize);
@@ -84,7 +93,7 @@ export default function SplitFlap({ value, length, align = "left", stagger = 45,
       <span className="visually-hidden">{raw.trim() || "blank"}</span>
       <span className="flap-tiles" aria-hidden="true">
         {chars.map((ch, i) => (
-          <FlapTile key={i} target={ch} delay={i * stagger} />
+          <FlapTile key={i} target={ch} delay={i * stagger} start={animateIn ? " " : ch} />
         ))}
       </span>
     </span>

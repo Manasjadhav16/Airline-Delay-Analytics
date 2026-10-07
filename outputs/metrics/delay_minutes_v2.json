@@ -1,0 +1,8 @@
+{
+  "mean_arrival_delay_all_min": 3.97,
+  "mean_arrival_delay_late_min": 60.42,
+  "median_arrival_delay_late_min": 38.0,
+  "late_flights": 2027678,
+  "total_flights": 11252153,
+  "late_threshold_min": 15
+}

@@ -1,0 +1,83 @@
+/* Split-flap tiles. Size comes from --tile-w (set in index.css, overridable
+   per container). */
+
+.flap-tiles {
+  display: inline-flex;
+  gap: var(--tile-gap);
+}
+
+.flap-tile {
+  position: relative;
+  display: block;
+  width: var(--tile-w);
+  height: var(--tile-h);
+  perspective: calc(var(--tile-h) * 6);
+  font-size: calc(var(--tile-w) * 0.95);
+  font-weight: 700;
+  color: var(--on-primary);
+}
+
+.flap-half {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 50%;
+  overflow: hidden;
+  background: var(--tile);
+  backface-visibility: hidden;
+}
+
+.flap-half > span {
+  display: block;
+  height: var(--tile-h);
+  line-height: var(--tile-h);
+  text-align: center;
+}
+
+.flap-top {
+  top: 0;
+  border-radius: 3px 3px 0 0;
+}
+
+.flap-bottom {
+  bottom: 0;
+  border-top: 1px solid var(--seam);
+  border-radius: 0 0 3px 3px;
+}
+
+.flap-bottom > span {
+  transform: translateY(calc(var(--tile-h) / -2));
+}
+
+.flap-fold {
+  z-index: 2;
+  transform-origin: bottom;
+  animation: flap-fold 70ms ease-in forwards;
+}
+
+.flap-unfold {
+  z-index: 2;
+  transform-origin: top;
+  transform: rotateX(90deg);
+  animation: flap-unfold 70ms ease-out 70ms forwards;
+}
+
+@keyframes flap-fold {
+  to {
+    transform: rotateX(-90deg);
+  }
+}
+
+@keyframes flap-unfold {
+  to {
+    transform: rotateX(0deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flap-fold,
+  .flap-unfold {
+    animation: none;
+    display: none;
+  }
+}
