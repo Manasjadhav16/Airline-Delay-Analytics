@@ -9,6 +9,7 @@ import {
   MONTHS,
 } from "../constants";
 import SplitFlap from "../components/SplitFlap";
+import AirportCombobox from "../components/AirportCombobox";
 import "./PredictPage.css";
 
 const initialForm = {
@@ -115,6 +116,10 @@ export default function PredictPage() {
     );
   }
 
+  // Labels come from /metadata's airport_details; fall back to bare codes if
+  // the backend predates that field.
+  const airportOptions =
+    metadata.airport_details ?? metadata.airports.map((code) => ({ code }));
   const isDelayed = result?.prediction === "delayed";
   const statusText = {
     idle: "",
@@ -219,20 +224,18 @@ export default function PredictPage() {
               </select>
             </label>
 
-            <label className="field">
-              <span className="board-label">Origin airport</span>
-              <select
+            <div className="field">
+              <label className="board-label" htmlFor="origin-airport">
+                Origin airport
+              </label>
+              <AirportCombobox
+                id="origin-airport"
                 value={form.origin_airport}
-                onChange={(e) => updateField("origin_airport", e.target.value)}
-                required
-              >
-                {metadata.airports.map((code) => (
-                  <option key={code} value={code}>
-                    {code}
-                  </option>
-                ))}
-              </select>
-            </label>
+                airports={airportOptions}
+                popular={metadata.popular_airports ?? []}
+                onChange={(code) => updateField("origin_airport", code)}
+              />
+            </div>
 
             <label className="field">
               <span className="board-label">Departure hour</span>

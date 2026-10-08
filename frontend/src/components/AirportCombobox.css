@@ -1,0 +1,91 @@
+/* Airport combobox. The input itself picks up the form's `.field input`
+   styles; this file covers the popover list. */
+
+.combo {
+  position: relative;
+}
+
+.combo input {
+  text-overflow: ellipsis;
+}
+
+.combo-list {
+  position: absolute;
+  z-index: 5;
+  top: calc(100% + 4px);
+  left: 0;
+  width: max(100%, min(380px, calc(100vw - 32px)));
+  max-height: 340px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 4px 0;
+  background: var(--canvas-night-soft);
+  border: 1px solid var(--hairline);
+  border-radius: 4px;
+}
+
+.combo-group {
+  position: sticky;
+  top: -4px;
+  padding: 4px 12px;
+  background: var(--canvas-night-soft);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.combo-option {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.combo-option.is-active {
+  background: var(--tile);
+  box-shadow: inset 2px 0 0 var(--amber);
+}
+
+.combo-code {
+  flex-shrink: 0;
+  width: 3.2em;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: var(--on-primary);
+}
+
+.combo-option.is-selected .combo-code {
+  color: var(--amber);
+}
+
+.combo-text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.combo-name {
+  font-size: 15px;
+  line-height: 1.35;
+  color: var(--on-primary-mute);
+}
+
+.combo-place {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--label);
+}
+
+.combo-empty {
+  padding: 12px;
+  font-size: 14px;
+  color: var(--label);
+}
+
+/* In the 3-column form the origin field sits in the right-hand column, so
+   open the list leftwards to stay inside the page column. */
+@media (min-width: 961px) {
+  .combo-list {
+    left: auto;
+    right: 0;
+  }
+}

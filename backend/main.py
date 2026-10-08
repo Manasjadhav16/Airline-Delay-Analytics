@@ -32,6 +32,8 @@ DELAY_THRESHOLD = 0.5
 # From src/export_model_v2.py's held-out test evaluation (sklearn
 # RandomForest, class_weight="balanced", threshold=0.5, combined 2015+2016
 # dataset): precision=0.2499, recall=0.6196.
+POPULAR_AIRPORT_COUNT = 25
+
 MODEL_RECALL = 0.6196
 MODEL_PRECISION = 0.2499
 
@@ -68,6 +70,35 @@ async def lifespan(app: FastAPI):
     )
     artifacts["known_airline_names"] = sorted(artifacts["airline_name_to_code"].keys())
     artifacts["known_airport_codes"] = set(artifacts["airport_encoder"].classes_)
+
+    # Display-only airport labels for the form: name/city/state from the same
+    # airports.csv lookup the pipeline joins. One row per airport the form
+    # offers, in the same order; codes missing from airports.csv (e.g. PGD)
+    # get null fields rather than a made-up name.
+    airports_df = pd.read_csv(f"{RAW_DIR}/airports.csv").set_index("IATA_CODE")
+    form_airports = artifacts["feature_metadata"]["airports"]
+    artifacts["airport_details"] = [
+        {
+            "code": code,
+            "name": airports_df.at[code, "AIRPORT"] if code in airports_df.index else None,
+            "city": airports_df.at[code, "CITY"] if code in airports_df.index else None,
+            "state": airports_df.at[code, "STATE"] if code in airports_df.index else None,
+        }
+        for code in form_airports
+    ]
+
+    # "Popular" = busiest origins by flight volume, from aggregate_v2.py's
+    # by-airport table (already sorted by total_flights desc there; re-sorted
+    # here so this doesn't depend on that). Missing file -> no popular group.
+    matches = glob.glob(f"{PROCESSED_DIR}/agg_by_airport_v2.csv/part-*.csv")
+    if matches:
+        volume = pd.read_csv(matches[0]).sort_values("total_flights", ascending=False)
+        form_airport_set = set(form_airports)
+        artifacts["popular_airports"] = [
+            code for code in volume["ORIGIN_AIRPORT"] if code in form_airport_set
+        ][:POPULAR_AIRPORT_COUNT]
+    else:
+        artifacts["popular_airports"] = []
 
     print(
         f"Loaded model, encoders, and metadata "
@@ -111,9 +142,13 @@ def health_check():
 
 @app.get("/metadata")
 def get_metadata():
+    # "airlines" and "airports" keep their original shape for existing
+    # consumers; the airport labels and popular list are additive.
     return {
         "airlines": artifacts["known_airline_names"],
         "airports": artifacts["feature_metadata"]["airports"],
+        "airport_details": artifacts["airport_details"],
+        "popular_airports": artifacts["popular_airports"],
     }
 
 
@@ -213,16 +248,23 @@ def get_airport_map():
     airport_stats = airport_stats[airport_stats["total_flights"] > 5000]
 
     airports_geo = pd.read_csv(f"{RAW_DIR}/airports.csv")[
-        ["IATA_CODE", "LATITUDE", "LONGITUDE"]
+        ["IATA_CODE", "AIRPORT", "CITY", "LATITUDE", "LONGITUDE"]
     ]
 
     merged = airport_stats.merge(
         airports_geo, left_on="ORIGIN_AIRPORT", right_on="IATA_CODE", how="inner"
     )
     merged = merged.rename(
-        columns={"ORIGIN_AIRPORT": "airport", "LATITUDE": "lat", "LONGITUDE": "lon"}
+        columns={
+            "ORIGIN_AIRPORT": "airport",
+            "AIRPORT": "name",
+            "CITY": "city",
+            "LATITUDE": "lat",
+            "LONGITUDE": "lon",
+        }
     )
-    merged = merged[["airport", "delay_pct", "total_flights", "lat", "lon"]]
+    # name/city are display-only additions; the original fields are unchanged.
+    merged = merged[["airport", "delay_pct", "total_flights", "lat", "lon", "name", "city"]]
     return merged.to_dict(orient="records")
 
 

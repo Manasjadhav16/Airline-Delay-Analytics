@@ -21,6 +21,7 @@ import {
 } from "../api";
 import { AIRLINE_CODES, MONTH_LABELS_SHORT, DAY_LABELS_SHORT } from "../constants";
 import SplitFlap from "../components/SplitFlap";
+import { airportLabel, shortName } from "../airportLabels";
 import "./DashboardPage.css";
 
 const US_MAP_TOPOJSON_URL = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
@@ -338,6 +339,13 @@ export default function DashboardPage() {
   const airportData = breakdown.status === "success" ? breakdown.data : null;
   const focusName = airportData ? airportData.airport : null;
   const selectedMapRow = airportMap?.find((a) => a.airport === selectedAirport);
+  const airportNames = new Map((airportMap ?? []).map((a) => [a.airport, a.name]));
+  const busiestData = stats.airport.map((r) => ({
+    ...r,
+    tooltipLabel: airportLabel({ code: r.name, name: airportNames.get(r.name) }),
+    // BoardTooltip reads `<dataKey>Flights` for the flight count.
+    delay_pctFlights: r.total_flights,
+  }));
 
   const nationalName = "All airports";
   const seriesNames = { national: nationalName, airport: focusName ?? "" };
@@ -449,7 +457,7 @@ export default function DashboardPage() {
                 .sort((a, b) => a.airport.localeCompare(b.airport))
                 .map((a) => (
                   <option key={a.airport} value={a.airport}>
-                    {a.airport} · {a.delay_pct}% late
+                    {airportLabel({ code: a.airport, name: a.name })} · {a.delay_pct}% late
                   </option>
                 ))}
             </select>
@@ -459,6 +467,7 @@ export default function DashboardPage() {
         {selectedMapRow && (
           <p className="map-readout" aria-live="polite">
             <strong>{selectedMapRow.airport}</strong>
+            {selectedMapRow.name && <span>{shortName(selectedMapRow.name)} ·</span>}
             {formatCount(selectedMapRow.total_flights)} departures ·{" "}
             <span className="map-readout-rate">{selectedMapRow.delay_pct}% arrived late</span>
             {" "}vs {summary.overallDelayPct.toFixed(2)}% across all airports
@@ -645,7 +654,7 @@ export default function DashboardPage() {
               note="Select a bar to brief on that airport. These are network figures and don't change with the filter."
             >
               <BarChart
-                data={stats.airport}
+                data={busiestData}
                 layout={narrow ? "vertical" : "horizontal"}
                 margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
               >
@@ -670,7 +679,7 @@ export default function DashboardPage() {
                   maxBarSize={narrow ? 12 : 28}
                   isAnimationActive={false}
                 >
-                  {stats.airport.map((row) => (
+                  {busiestData.map((row) => (
                     <Cell
                       key={row.name}
                       cursor="pointer"
@@ -762,7 +771,7 @@ function AirportDelayMap({ airports, selected, onSelect, tokens }) {
       </ComposableMap>
       <p className="map-hover" aria-hidden="true">
         {hoverRow
-          ? `${hoverRow.airport} · ${hoverRow.delay_pct}% late · ${hoverRow.total_flights.toLocaleString("en-US")} departures`
+          ? `${airportLabel({ code: hoverRow.airport, name: hoverRow.name })} · ${hoverRow.delay_pct}% late · ${hoverRow.total_flights.toLocaleString("en-US")} departures`
           : `${projectable.length} airports plotted${hidden ? `, ${hidden} outside the map projection` : ""}`}
       </p>
     </div>
@@ -816,7 +825,7 @@ function AirportDots({ airports, selected, onSelect, onHover, maxFlights, minDel
           onMouseLeave={() => onHover(null)}
         >
           <title>
-            {airport.airport}: {airport.delay_pct}% late, {airport.total_flights.toLocaleString("en-US")} departures
+            {airportLabel({ code: airport.airport, name: airport.name })}: {airport.delay_pct}% late, {airport.total_flights.toLocaleString("en-US")} departures
           </title>
         </circle>
         {isSelected && (
